@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Award,
   Code2,
@@ -10,8 +12,11 @@ import {
   Network,
   Palette,
   Server,
+  X,
+  ZoomIn,
 } from 'lucide-react'
 import './aboutme.css'
+import { createCertificateZoom, type CertificateZoom } from './backend/cert_click'
 import cert1 from '../images/Cert/Cisco_cert.jpg'
 import cert2 from '../images/Cert/AIVA.jpg'
 import cert3 from '../images/Cert/cpe.jpg'
@@ -167,6 +172,37 @@ const facts = [
 ]
 
 const AboutMe = () => {
+  const [activeCertificate, setActiveCertificate] = useState<CertificateZoom | null>(null)
+
+  useEffect(() => {
+    if (!activeCertificate) {
+      return
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveCertificate(null)
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [activeCertificate])
+
+  const openCertificate = (webinar: (typeof webinars)[number]) => {
+    if (!webinar.image) {
+      return
+    }
+
+    setActiveCertificate(createCertificateZoom(webinar.image, webinar.title))
+  }
+
   return (
     <section className="aboutme" id="aboutme" aria-labelledby="about-heading">
       <p className="about-label">Hello, Welcome!</p>
@@ -272,7 +308,17 @@ const AboutMe = () => {
               <div className="webinar-card" role="listitem" key={webinar.title}>
                 <div className="webinar-media">
                   {webinar.image ? (
-                    <img src={webinar.image} alt={`${webinar.title} certificate`} />
+                    <button
+                        type="button"
+                        className="certificate-trigger"
+                        onClick={() => openCertificate(webinar)}
+                        aria-label={`Open ${webinar.title} certificate`}
+                      >
+                        <img src={webinar.image} alt={`${webinar.title} certificate`} />
+                        <span className="certificate-zoom-icon" aria-hidden="true">
+                          <ZoomIn />
+                        </span>
+                      </button>
                   ) : (
                     <ImageIcon aria-hidden="true" />
                   )}
@@ -301,6 +347,30 @@ const AboutMe = () => {
           </div>
         </aside>
       </div>
+
+      {activeCertificate && createPortal(
+        <div
+          className="certificate-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={activeCertificate.title}
+          onClick={() => setActiveCertificate(null)}
+        >
+          <button
+            type="button"
+            className="certificate-close"
+            onClick={() => setActiveCertificate(null)}
+            aria-label="Close certificate preview"
+          >
+            <X aria-hidden="true" />
+          </button>
+          <div className="certificate-modal-panel" onClick={(event) => event.stopPropagation()}>
+            <p>{activeCertificate.title}</p>
+            <img src={activeCertificate.src} alt={activeCertificate.alt} />
+          </div>
+        </div>,
+        document.body,
+      )}
     </section>
   )
 }

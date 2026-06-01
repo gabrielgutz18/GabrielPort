@@ -4,11 +4,12 @@ import Footer from './components/footer'
 import heroImage from './images/myself1.png'
 import Skill from './components/skill' 
 import PixelBlast from './components/PixelBlast'
-import Aboutme from './components/aboutme.tsx'
+import Aboutme from './components/aboutme'
+import Projects from './components/projects'
 import gitimg from './assets/github-svgrepo-com.svg'
 import linkedinimg from './assets/linkedin-svgrepo-com.svg'
 import { Typewriter } from 'react-simple-typewriter'
-
+// removed unused import 'projects'
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
 
       <Aboutme/>
       <Skill/>
+      <Projects/>
       <Footer/>
     </div>
   )

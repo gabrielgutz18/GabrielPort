@@ -1,4 +1,5 @@
 import './skill.css'
+import type { ReactNode } from 'react'
 import LogoLoop from './LogoLoop'
 import {
   SiArduino,
@@ -16,10 +17,19 @@ import {
   SiRaspberrypi,
   SiVercel,
   SiSupabase,
+  SiTypescript,
+  SiReact,
+  SiAnthropic,
+ 
 } from 'react-icons/si' 
 import { VscVscode } from 'react-icons/vsc'
 import { BiPointer } from 'react-icons/bi'
 import { BrainCircuit, Code2, Cpu, Layers3, MessageCircle, Sparkles, UsersRound } from 'lucide-react'
+
+type SkillItem = string | {
+  label: string
+  icon: ReactNode
+}
 
 const techLogos = [
   { node: <SiPython />, title: 'Python', href: 'https://www.python.org' },
@@ -39,6 +49,10 @@ const techLogos = [
   { node: <SiRaspberrypi />, title: 'Raspberry Pi', href: 'https://www.raspberrypi.com' },
   { node: <SiMysql />, title: 'MySQL', href: 'https://www.mysql.com' },
   { node: <SiCplusplus />, title: 'C++', href: 'https://isocpp.org' },
+  { node: <SiReact />, title: 'ReactJS', href: 'https://react.dev' },
+  { node: <SiTypescript />, title: 'Typescript', href: 'https://www.typescriptlang.org' },
+  { node: <SiAnthropic />, title: 'Claude code', href: 'https://anthropic.com' },
+  
 ]
 
 const skillGroups = [
@@ -46,26 +60,61 @@ const skillGroups = [
     title: 'Development',
     summary: 'Building responsive interfaces, scripting workflows, and wiring front-end logic into practical systems.',
     Icon: Code2,
-    skills: ['Python', 'JavaScript', 'HTML5', 'CSS', 'C++', 'MySQL','ReactJS', 'Typescript'],
+    skills: [
+      { label: 'Python', icon: <SiPython aria-hidden="true" /> },
+      { label: 'JavaScript', icon: <SiJavascript aria-hidden="true" /> },
+      { label: 'HTML5', icon: <SiHtml5 aria-hidden="true" /> },
+      { label: 'CSS', icon: <SiCss aria-hidden="true" /> },
+      { label: 'C++', icon: <SiCplusplus aria-hidden="true" /> },
+      { label: 'MySQL', icon: <SiMysql aria-hidden="true" /> },
+      { label: 'ReactJS', icon: <SiReact aria-hidden="true" /> },
+      { label: 'Typescript', icon: <SiTypescript aria-hidden="true" /> },
+    ],
   },
   {
     title: 'Platforms',
     summary: 'Shipping projects with version control, hosting, database tools, and domain setup.',
     Icon: Layers3,
-    skills: ['GitHub', 'Vercel', 'Supabase', 'GoDaddy'],
+    skills: [
+
+      { label: 'GitHub', icon: <SiGithub aria-hidden="true" /> }, 
+      { label: 'Vercel', icon: <SiVercel aria-hidden="true" /> },
+      { label: 'Supabase', icon: <SiSupabase aria-hidden="true" /> },
+      { label: 'GoDaddy', icon: <SiGodaddy aria-hidden="true" /> }
+    
+    ],
   },
   {
     title: 'AI & Creative Tools',
     summary: 'Using AI-assisted development and design tools to move faster while keeping the work intentional.',
     Icon: BrainCircuit,
-    skills: ['OpenAI Codex', 'Gemini','Claude code', 'Cursor', 'VS Code', 'Canva'],
+    skills: [
+      { label: 'OpenAI Codex', icon: <SiOpenai aria-hidden="true" /> },
+      { label: 'Gemini', icon: <SiGooglegemini aria-hidden="true" /> },
+      { label: 'Claude code', icon: <SiAnthropic aria-hidden="true" /> },
+      { label: 'Cursor', icon: <BiPointer aria-hidden="true" /> },
+      { label: 'VS Code', icon: <VscVscode aria-hidden="true" /> },
+      { label: 'Canva', icon: <SiCanva aria-hidden="true" /> }
+    ],
   },
   {
-    title: 'Hardware',
-    summary: 'Connecting software with embedded projects, IoT experiments, and computer engineering builds.',
+    title: 'Technical/ Hardware',
+    summary: 'Experience with microcontrollers, single-board computers, and general computer engineering tasks to build and maintain practical systems.',
     Icon: Cpu,
-    skills: ['Arduino IDE', 'Raspberry Pi', 'Pixhawk Ardupilot'],
+    skills: [
+      { label: 'Arduino IDE', icon: <SiArduino aria-hidden="true" /> },
+      { label: 'Raspberry Pi', icon: <SiRaspberrypi aria-hidden="true" /> },
+      'Pixhawk autopilot',
+      'Computer System',
+      'troubleshooting and Maintenance',
+      'Networking',
+      'Network Attached Storage (NAS) setup and management',
+      'installing operating Systems and software',
+      'Hardware Installation and Upgrades',   
+      'IT support',
+    ],
   },
+  
 ]
 
 const softSkills = [
@@ -85,6 +134,22 @@ const focusAreas = [
 ]
 
 function Skill() {
+  const renderSkill = (skill: SkillItem) => {
+    if (typeof skill === 'string') {
+      return skill
+    }
+
+    return (
+      <>
+        <span className="skill-chip-icon">{skill.icon}</span>
+        {skill.label}
+      </>
+    )
+  }
+
+  const getSkillKey = (skill: SkillItem) =>
+    typeof skill === 'string' ? skill : skill.label
+
   return (
     <section className="skill" id="skills" aria-labelledby="skills-heading">
       <div className="skill-logo-loop">
@@ -128,7 +193,7 @@ function Skill() {
               <p>{summary}</p>
               <ul className="skill-chip-list" aria-label={`${title} skills`}>
                 {skills.map((skill) => (
-                  <li key={skill}>{skill}</li>
+                  <li key={getSkillKey(skill)}>{renderSkill(skill)}</li>
                 ))}
               </ul>
             </article>

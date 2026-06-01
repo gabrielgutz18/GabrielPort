@@ -15,7 +15,7 @@ import {
   X,
   ZoomIn,
 } from 'lucide-react'
-import './aboutme.css'
+import './css/aboutme.css'
 import { createCertificateZoom, type CertificateZoom } from './backend/cert_click'
 import cert1 from '../images/Cert/Cisco_cert.jpg'
 import cert2 from '../images/Cert/AIVA.jpg'

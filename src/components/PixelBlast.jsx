@@ -1,7 +1,7 @@
 import { Effect, EffectComposer, EffectPass, RenderPass } from 'postprocessing';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import './PixelBlast.css';
+import './css/PixelBlast.css';
 
 const createTouchTexture = () => {
   const size = 64;

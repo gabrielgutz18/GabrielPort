@@ -1,4 +1,4 @@
-import './skill.css'
+import './css/skill.css'
 import type { ReactNode } from 'react'
 import LogoLoop from './LogoLoop'
 import {

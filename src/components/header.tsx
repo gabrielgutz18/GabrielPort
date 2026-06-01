@@ -1,4 +1,4 @@
-import './header.css'
+import './css/header.css'
 import iconHead from '../assets/GW.svg'
 
 function Header() {
@@ -11,7 +11,8 @@ function Header() {
 
       <nav className="site-nav" aria-label="Main navigation">
         <a href="#home">Home</a>
-        <a href="#about">About</a>
+        <a href="#aboutme">About</a>
+        <a href="#skills">My Skills</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
       </nav>

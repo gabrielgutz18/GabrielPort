@@ -23,10 +23,10 @@ function Header() {
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" placeholder="Search..." />
+          <input type="text" placeholder="Search..." aria-label="Search site" />
         </div>
 
-        <button className="header-menu-btn">
+        <button type="button" className="header-menu-btn" aria-label="Open navigation menu">
           <span></span>
           <span></span>
           <span></span>

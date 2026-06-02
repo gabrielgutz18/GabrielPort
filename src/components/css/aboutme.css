@@ -747,6 +747,15 @@
   line-height: 1;
 }
 
+.fact-image {
+  margin-bottom: 8px;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
 .fact-text {
   color: rgba(255, 255, 255, 0.68);
   font-size: 12px;

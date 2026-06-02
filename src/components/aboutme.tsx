@@ -30,6 +30,14 @@ import cert10 from '../images/Cert/ccna.png'
 import cert11 from '../images/Cert/sddt.png'
 import cert12 from '../images/Cert/serverless.png'
 
+import hobby1 from '../assets/svgs/coding-code-svgrepo-com.svg'
+import hobby2 from '../assets/svgs/coffee-cup-svgrepo-com.svg'
+import hobby3 from '../assets/svgs/d-pad-svgrepo-com.svg'
+import hobby4 from '../assets/svgs/music-svgrepo-com (1).svg'
+import hobby5 from '../assets/svgs/paint-svgrepo-com.svg'
+import hobby6 from '../assets/svgs/running-svgrepo-com.svg'
+
+
 
 
 const skills = [
@@ -162,12 +170,12 @@ const webinars = [
 ]
 
 const facts = [
-  { emoji: '☕', text: 'Fueled by coffee - always one cup too many' },
-  { emoji: '🌙', text: 'Loves Coding and Studying Midnight' },
-  { emoji: '🎨', text: 'Edits graphics and social media contents' },
-  { emoji: '🏃', text: 'Loves Doing Daily Runs, For a Stronger Health' },
-  { emoji: '🎮', text: 'Gamer - strategy and immersive worlds' },
-  { emoji: '🎵', text: 'Music Enthusiast - from lo-fi beats to rock classics' },
+  { image: hobby2, text: 'Fueled by coffee - always one cup too many' },
+  { image: hobby1, text: 'Loves Coding and Studying Midnight' }, //
+  { image: hobby5, text: 'Edits graphics and social media contents' },
+  { image: hobby6, text: 'Loves Doing Daily Runs, For a Stronger Health' },
+  { image: hobby3, text: 'Gamer - strategy and immersive worlds' },
+  { image: hobby4, text: 'Music Enthusiast - from lo-fi beats to rock classics' },
  
 ]
 
@@ -340,7 +348,11 @@ const AboutMe = () => {
           <div className="facts-grid" role="list" aria-label="Fun facts">
             {facts.map((fact) => (
               <div className="fact-card" role="listitem" key={fact.text}>
-                <div className="fact-emoji">{fact.emoji}</div>
+                {fact.image ? (
+                  <img src={fact.image} alt={fact.text} className="fact-image" />
+                ) : (
+                  <div className="fact-image">{fact.image}</div>
+                )}
                 <p className="fact-text">{fact.text}</p>
               </div>
             ))}

@@ -26,6 +26,8 @@ import hobby3 from '../../assets/svgs/d-pad-svgrepo-com.svg'
 import hobby4 from '../../assets/svgs/music-svgrepo-com (1).svg'
 import hobby5 from '../../assets/svgs/paint-svgrepo-com.svg'
 import hobby6 from '../../assets/svgs/running-svgrepo-com.svg'
+import gvgImage from '../../images/gvg.png'
+import nqstvImage from '../../images/nqstv.png'
 
 export type AboutSkill = {
   label: string
@@ -35,6 +37,14 @@ export type AboutSkill = {
 export type Build = {
   title: string
   description: string
+  details: string
+  challenge: string
+  solution: string
+  images: {
+    src: string
+    alt: string
+    caption: string
+  }[]
   Icon: LucideIcon
   tone: 'neutral' | 'cool' | 'warm'
   href?: string
@@ -69,6 +79,24 @@ export const builds: Build[] = [
     title: 'nqstv.net - Live company website',
     description:
       'Full-stack deployment via GitHub Pages, custom domain, EmailJS, Crisp chat, and a 99% Lighthouse score.',
+    details:
+      'A live company website built to present the business clearly, provide contact paths, and keep performance strong across desktop and mobile.',
+    challenge:
+      'The biggest challenge was connecting the custom domain, keeping the page fast, and adding contact tools without making the site feel heavy.',
+    solution:
+      'I deployed through GitHub Pages, tuned the assets and layout, connected EmailJS and Crisp chat, then checked the site with Lighthouse until the performance score stayed high.',
+    images: [
+      {
+        src: nqstvImage,
+        alt: 'NQSTV website homepage preview',
+        caption: 'Live website homepage preview',
+      },
+      {
+        src: gvgImage,
+        alt: 'Related website project preview',
+        caption: 'Responsive website layout reference',
+      },
+    ],
     Icon: Globe2,
     tone: 'neutral',
     href: 'https://nqstv.net',
@@ -77,6 +105,13 @@ export const builds: Build[] = [
     title: 'Search-and-rescue drone system',
     description:
       'YOLOv8 AI detection, thermal camera, LiDAR obstacle avoidance, GPS accuracy, and RTH fail-safe.',
+    details:
+      'A thesis system concept focused on helping search-and-rescue teams detect people and navigate safer flight paths using onboard sensing.',
+    challenge:
+      'The difficult part was combining multiple hardware and software features while keeping the system understandable and reliable.',
+    solution:
+      'I separated the system into detection, navigation, and safety modules, then planned each part around YOLOv8, thermal sensing, LiDAR, GPS tracking, and return-to-home behavior.',
+    images: [],
     Icon: Cpu,
     tone: 'cool',
   },
@@ -84,9 +119,30 @@ export const builds: Build[] = [
     title: 'TrueNAS server + remote access',
     description:
       'ZFS RAID-1 storage, Tailscale VPN, and a 2.5G NIC upgrade for faster transfer speeds.',
+    details:
+      'A local NAS setup for shared storage, remote access, and faster internal transfer speeds for office files and backup workflows.',
+    challenge:
+      'Remote access needed to be simple while still avoiding unsafe public exposure of the storage server.',
+    solution:
+      'I configured TrueNAS storage with ZFS RAID-1, used Tailscale for private remote access, and added a 2.5G NIC to improve transfer performance.',
+    images: [],
     Icon: Server,
     tone: 'warm',
   },
+  {
+    title: 'Arduino project',
+    description:
+      'Developed a simple Arduino project to understand embedded systems and microcontroller programming.',
+    details:
+      'A hands-on embedded systems project used to practice sensor logic, wiring, microcontroller programming, and hardware-software integration.',
+    challenge:
+      'The main challenge was debugging both the physical circuit and the code at the same time.',
+    solution:
+      'I tested the wiring step by step, isolated each component, and adjusted the program until the hardware response matched the expected behavior.',
+    images: [],
+    Icon: Cpu,
+    tone: 'neutral',
+  }
 ]
 
 export const experience = [

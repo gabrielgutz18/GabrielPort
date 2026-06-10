@@ -25,7 +25,7 @@ function App() {
                 style={{}}
                 variant="square"
                 pixelSize={2}
-                color="#2a2a2a"
+                color="#1f1e1e"
                 patternScale={4.5}
                 patternDensity={1.2}
                 enableRipples

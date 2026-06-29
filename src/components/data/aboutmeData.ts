@@ -28,6 +28,16 @@ import hobby5 from '../../assets/svgs/paint-svgrepo-com.svg'
 import hobby6 from '../../assets/svgs/running-svgrepo-com.svg'
 import gvgImage from '../../images/gvg.png'
 import nqstvImage from '../../images/nqstv.png'
+import droneImage from '../../images/drone.png'
+import drone3dImage from '../../images/drone3d.png'
+import cameraImage from '../../images/camerasystem.png'
+import cameratesting from '../../images/cameratesting.png'
+import test from '../../images/actualtesting.png'
+import flight from '../../images/flight.png'
+import sky from '../../images/sky.png'
+import defended from '../../images/defended.png'
+import group from '../../images/group.png'
+import assemble from '../../images/assembly.png'
 
 export type AboutSkill = {
   label: string
@@ -38,6 +48,7 @@ export type Build = {
   title: string
   description: string
   details: string
+  position?: string
   challenge: string
   solution: string
   images: {
@@ -102,16 +113,68 @@ export const builds: Build[] = [
     href: 'https://nqstv.net',
   },
   {
-    title: 'Search-and-rescue drone system',
+    title: 'AeroTech 737r: A Pixhawk based and Raspberry pi Rescue drone system',
     description:
-      'YOLOv8 AI detection, thermal camera, LiDAR obstacle avoidance, GPS accuracy, and RTH fail-safe.',
+      'YOLOv8 AI detection, thermal camera, Obstacle Avoidance.',
     details:
       'A thesis system concept focused on helping search-and-rescue teams detect people and navigate safer flight paths using onboard sensing.',
+    position: 'System Integrator, Programmer',
     challenge:
       'The difficult part was combining multiple hardware and software features while keeping the system understandable and reliable.',
     solution:
       'I separated the system into detection, navigation, and safety modules, then planned each part around YOLOv8, thermal sensing, LiDAR, GPS tracking, and return-to-home behavior.',
-    images: [],
+    images: [
+      {
+        src: drone3dImage,
+        alt: 'Search-and-rescue drone system preview',
+        caption: 'Search-and-rescue Drone concept design',
+      },
+      {
+        src: droneImage,
+        alt: 'Search-and-rescue drone system preview',
+        caption: 'Actual Search-and-rescue Drone ',
+      },
+      {
+        src: cameraImage,
+        alt: '50% prototype Camera system for Search-and-rescue Drone',
+        caption: '50% prototype Camera system for Search-and-rescue Drone',
+      },
+      {
+        src: assemble,
+        alt: 'Drone assembly and wiring',
+        caption: 'Drone assembly and wiring',
+      },
+      {
+        src: cameratesting,
+        alt: 'Camera system testing for Thesis Presentation',
+        caption: 'Camera system testing for Thesis Presentation',
+      },
+      {
+        src: test,
+        alt: 'Actual Testing of theraml camera and YOLOv8 detection',
+        caption: 'Actual Testing of IR camera and YOLOv8 detection',
+      },
+      {
+        src: flight,
+        alt: 'Drone in flight',
+        caption: 'Drone in flight',
+      },
+      {
+        src: sky,
+        alt: 'Drone in flight',
+        caption: 'Drone in flight',
+      },
+      {
+        src: group,
+        alt: 'Group photo with evaluators',
+        caption: 'Group photo with evaluators',
+      },
+      {
+        src: defended,
+        alt: 'Thesis Defended',
+        caption: "Thesis Defended and now I'm a graduate of Computer Engineering",
+      }
+    ],
     Icon: Cpu,
     tone: 'cool',
   },

@@ -57,7 +57,7 @@ const AboutMe = () => {
   }, [activeBuildImages.length, activeBuildTitle])
 
   const showPreviousImage = () => {
-    if (activeBuildImages.length === 0) {
+    if (activeBuildImages.length < 2) {
       return
     }
 
@@ -67,7 +67,7 @@ const AboutMe = () => {
   }
 
   const showNextImage = () => {
-    if (activeBuildImages.length === 0) {
+    if (activeBuildImages.length < 2) {
       return
     }
 
@@ -297,20 +297,32 @@ const AboutMe = () => {
               </button>
               <div className="images">
                 {activeBuildImages.length > 0 ? (
-                  (activeBuildImages.length === 1 ? [0] : [-1, 0, 1]).map((offset) => {
-                    const imageIndex = (
-                      activeImageIndex + offset + activeBuildImages.length
-                    ) % activeBuildImages.length
-                    const image = activeBuildImages[imageIndex]
-                    const position = offset === 0 ? 'center' : 'side'
+                  <div className="carousel-track">
+                    {activeBuildImages.map((image, imageIndex) => {
+                      let offset = imageIndex - activeImageIndex
+                      const halfwayPoint = activeBuildImages.length / 2
 
-                    return (
-                      <figure className={`carousel-slide carousel-slide-${position}`} key={`${image.caption}-${offset}`}>
-                        <img src={image.src} alt={image.alt} />
-                        <figcaption>{image.caption}</figcaption>
-                      </figure>
-                    )
-                  })
+                      if (offset > halfwayPoint) {
+                        offset -= activeBuildImages.length
+                      } else if (offset < -halfwayPoint) {
+                        offset += activeBuildImages.length
+                      }
+
+                      const slidePosition =
+                        offset === 0 ? 'center' : offset === -1 ? 'before' : offset === 1 ? 'after' : 'hidden'
+
+                      return (
+                        <figure
+                          className={`carousel-slide carousel-slide-${slidePosition}`}
+                          key={`${image.src}-${image.caption}`}
+                          aria-hidden={slidePosition !== 'center'}
+                        >
+                          <img src={image.src} alt={image.alt} />
+                          <figcaption>{image.caption}</figcaption>
+                        </figure>
+                      )
+                    })}
+                  </div>
                 ) : (
                   <div className="carousel-empty">
                     <ImageIcon aria-hidden="true" />
@@ -332,6 +344,12 @@ const AboutMe = () => {
             <div className="build-modal-content">
               <p className="build-modal-label">Project details</p>
               <h2>{activeBuild.title}</h2>
+              {activeBuild.position && (
+                <p className="build-modal-position">
+                  <span>Position/role</span>
+                  {activeBuild.position}
+                </p>
+              )}
               <p>{activeBuild.details}</p>
 
               <div className="build-modal-notes">

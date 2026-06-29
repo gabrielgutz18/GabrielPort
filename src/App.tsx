@@ -9,7 +9,7 @@ import Projects from './components/projects'
 import gitimg from './assets/github-svgrepo-com.svg'
 import linkedinimg from './assets/linkedin-svgrepo-com.svg'
 import { Typewriter } from 'react-simple-typewriter'
-// removed unused import 'projects'
+
 
 function App() {
   return (

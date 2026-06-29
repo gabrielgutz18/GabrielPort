@@ -26,6 +26,18 @@ import hobby3 from '../../assets/svgs/d-pad-svgrepo-com.svg'
 import hobby4 from '../../assets/svgs/music-svgrepo-com (1).svg'
 import hobby5 from '../../assets/svgs/paint-svgrepo-com.svg'
 import hobby6 from '../../assets/svgs/running-svgrepo-com.svg'
+import gvgImage from '../../images/gvg.png'
+import nqstvImage from '../../images/nqstv.png'
+import droneImage from '../../images/drone.png'
+import drone3dImage from '../../images/drone3d.png'
+import cameraImage from '../../images/camerasystem.png'
+import cameratesting from '../../images/cameratesting.png'
+import test from '../../images/actualtesting.png'
+import flight from '../../images/flight.png'
+import sky from '../../images/sky.png'
+import defended from '../../images/defended.png'
+import group from '../../images/group.png'
+import assemble from '../../images/assembly.png'
 
 export type AboutSkill = {
   label: string
@@ -35,6 +47,15 @@ export type AboutSkill = {
 export type Build = {
   title: string
   description: string
+  details: string
+  position?: string
+  challenge: string
+  solution: string
+  images: {
+    src: string
+    alt: string
+    caption: string
+  }[]
   Icon: LucideIcon
   tone: 'neutral' | 'cool' | 'warm'
   href?: string
@@ -69,14 +90,91 @@ export const builds: Build[] = [
     title: 'nqstv.net - Live company website',
     description:
       'Full-stack deployment via GitHub Pages, custom domain, EmailJS, Crisp chat, and a 99% Lighthouse score.',
+    details:
+      'A live company website built to present the business clearly, provide contact paths, and keep performance strong across desktop and mobile.',
+    challenge:
+      'The biggest challenge was connecting the custom domain, keeping the page fast, and adding contact tools without making the site feel heavy.',
+    solution:
+      'I deployed through GitHub Pages, tuned the assets and layout, connected EmailJS and Crisp chat, then checked the site with Lighthouse until the performance score stayed high.',
+    images: [
+      {
+        src: nqstvImage,
+        alt: 'NQSTV website homepage preview',
+        caption: 'Live website homepage preview',
+      },
+      {
+        src: gvgImage,
+        alt: 'Related website project preview',
+        caption: 'Responsive website layout reference',
+      },
+    ],
     Icon: Globe2,
     tone: 'neutral',
     href: 'https://nqstv.net',
   },
   {
-    title: 'Search-and-rescue drone system',
+    title: 'AeroTech 737r: A Pixhawk based and Raspberry pi Rescue drone system',
     description:
-      'YOLOv8 AI detection, thermal camera, LiDAR obstacle avoidance, GPS accuracy, and RTH fail-safe.',
+      'YOLOv8 AI detection, thermal camera, Obstacle Avoidance.',
+    details:
+      'A thesis system concept focused on helping search-and-rescue teams detect people and navigate safer flight paths using onboard sensing.',
+    position: 'System Integrator, Programmer',
+    challenge:
+      'The difficult part was combining multiple hardware and software features while keeping the system understandable and reliable.',
+    solution:
+      'I separated the system into detection, navigation, and safety modules, then planned each part around YOLOv8, thermal sensing, LiDAR, GPS tracking, and return-to-home behavior.',
+    images: [
+      {
+        src: drone3dImage,
+        alt: 'Search-and-rescue drone system preview',
+        caption: 'Search-and-rescue Drone concept design',
+      },
+      {
+        src: droneImage,
+        alt: 'Search-and-rescue drone system preview',
+        caption: 'Actual Search-and-rescue Drone ',
+      },
+      {
+        src: cameraImage,
+        alt: '50% prototype Camera system for Search-and-rescue Drone',
+        caption: '50% prototype Camera system for Search-and-rescue Drone',
+      },
+      {
+        src: assemble,
+        alt: 'Drone assembly and wiring',
+        caption: 'Drone assembly and wiring',
+      },
+      {
+        src: cameratesting,
+        alt: 'Camera system testing for Thesis Presentation',
+        caption: 'Camera system testing for Thesis Presentation',
+      },
+      {
+        src: test,
+        alt: 'Actual Testing of theraml camera and YOLOv8 detection',
+        caption: 'Actual Testing of IR camera and YOLOv8 detection',
+      },
+      {
+        src: flight,
+        alt: 'Drone in flight',
+        caption: 'Drone in flight',
+      },
+      {
+        src: sky,
+        alt: 'Drone in flight',
+        caption: 'Drone in flight',
+      },
+      {
+        src: group,
+        alt: 'Group photo with evaluators',
+        caption: 'Group photo with evaluators',
+      },
+      {
+        src: defended,
+        alt: 'Thesis Defended',
+        caption: "Thesis Defended and now I'm a graduate of Computer Engineering",
+      }
+    ],
     Icon: Cpu,
     tone: 'cool',
   },
@@ -84,9 +182,30 @@ export const builds: Build[] = [
     title: 'TrueNAS server + remote access',
     description:
       'ZFS RAID-1 storage, Tailscale VPN, and a 2.5G NIC upgrade for faster transfer speeds.',
+    details:
+      'A local NAS setup for shared storage, remote access, and faster internal transfer speeds for office files and backup workflows.',
+    challenge:
+      'Remote access needed to be simple while still avoiding unsafe public exposure of the storage server.',
+    solution:
+      'I configured TrueNAS storage with ZFS RAID-1, used Tailscale for private remote access, and added a 2.5G NIC to improve transfer performance.',
+    images: [],
     Icon: Server,
     tone: 'warm',
   },
+  {
+    title: 'Arduino project',
+    description:
+      'Developed a simple Arduino project to understand embedded systems and microcontroller programming.',
+    details:
+      'A hands-on embedded systems project used to practice sensor logic, wiring, microcontroller programming, and hardware-software integration.',
+    challenge:
+      'The main challenge was debugging both the physical circuit and the code at the same time.',
+    solution:
+      'I tested the wiring step by step, isolated each component, and adjusted the program until the hardware response matched the expected behavior.',
+    images: [],
+    Icon: Cpu,
+    tone: 'neutral',
+  }
 ]
 
 export const experience = [

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Award, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
+import { Award, ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
 import './css/aboutme.css'
 import {
   aboutSkills,
@@ -15,15 +15,20 @@ import { createCertificateZoom, type CertificateZoom } from './utils/certificate
 
 const AboutMe = () => {
   const [activeCertificate, setActiveCertificate] = useState<CertificateZoom | null>(null)
+  const [activeBuildTitle, setActiveBuildTitle] = useState<string | null>(null)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const activeBuild = builds.find((build) => build.title === activeBuildTitle)
+  const activeBuildImages = activeBuild?.images ?? []
 
   useEffect(() => {
-    if (!activeCertificate) {
+    if (!activeCertificate && !activeBuildTitle) {
       return
     }
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setActiveCertificate(null)
+        setActiveBuildTitle(null)
       }
     }
 
@@ -35,7 +40,44 @@ const AboutMe = () => {
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', closeOnEscape)
     }
-  }, [activeCertificate])
+  }, [activeCertificate, activeBuildTitle])
+
+  useEffect(() => {
+    if (!activeBuildTitle || activeBuildImages.length < 2) {
+      return
+    }
+
+    const intervalId = window.setInterval(() => {
+      setActiveImageIndex((currentIndex) => (currentIndex + 1) % activeBuildImages.length)
+    }, 3600)
+
+    return () => {
+      window.clearInterval(intervalId)
+    }
+  }, [activeBuildImages.length, activeBuildTitle])
+
+  const showPreviousImage = () => {
+    if (activeBuildImages.length < 2) {
+      return
+    }
+
+    setActiveImageIndex((currentIndex) => (
+      currentIndex === 0 ? activeBuildImages.length - 1 : currentIndex - 1
+    ))
+  }
+
+  const showNextImage = () => {
+    if (activeBuildImages.length < 2) {
+      return
+    }
+
+    setActiveImageIndex((currentIndex) => (currentIndex + 1) % activeBuildImages.length)
+  }
+
+  const openBuild = (title: string) => {
+    setActiveImageIndex(0)
+    setActiveBuildTitle(title)
+  }
 
   const openCertificate = (webinar: Webinar) => {
     if (!webinar.image) {
@@ -90,14 +132,22 @@ const AboutMe = () => {
           <p className="section-title">What I've built</p>
           <ul className="build-list">
             {builds.map(({ title, description, Icon, tone, href }) => (
-              <li className="build-item" key={title}>
-                <div className={`build-icon build-icon-${tone}`}>
-                  <Icon aria-hidden="true" />
-                </div>
-                <div className="build-text">
-                  <strong>{title}</strong>
-                  <span>{description}</span>
-                </div>
+              <li className={`build-item ${activeBuildTitle === title ? 'is-active' : ''}`} key={title}>
+                <button
+                  type="button"
+                  className="build-card-button"
+                  onClick={() => openBuild(title)}
+                  aria-haspopup="dialog"
+                  aria-expanded={activeBuildTitle === title}
+                >
+                  <div className={`build-icon build-icon-${tone}`}>
+                    <Icon aria-hidden="true" />
+                  </div>
+                  <div className="build-text">
+                    <strong>{title}</strong>
+                    <span>{description}</span>
+                  </div>
+                </button>
                 {href && (
                   <a
                     href={href}
@@ -213,6 +263,106 @@ const AboutMe = () => {
           <div className="certificate-modal-panel" onClick={(event) => event.stopPropagation()}>
             <p>{activeCertificate.title}</p>
             <img src={activeCertificate.src} alt={activeCertificate.alt} />
+          </div>
+        </div>,
+        document.body,
+      )}
+
+      {activeBuild && createPortal(
+        <div
+          className="build-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={activeBuild.title}
+          onClick={() => setActiveBuildTitle(null)}
+        >
+          <button
+            type="button"
+            className="build-modal-close"
+            onClick={() => setActiveBuildTitle(null)}
+            aria-label={`Close ${activeBuild.title} preview`}
+          >
+            <X aria-hidden="true" />
+          </button>
+          <div className="build-modal-blank" onClick={(event) => event.stopPropagation()}>
+            <div className="image-carousel" aria-label={`${activeBuild.title} image carousel`}>
+              <button
+                type="button"
+                className="carousel-control prev"
+                onClick={showPreviousImage}
+                aria-label="Previous image"
+                disabled={activeBuildImages.length < 2}
+              >
+                <ChevronLeft aria-hidden="true" />
+              </button>
+              <div className="images">
+                {activeBuildImages.length > 0 ? (
+                  <div className="carousel-track">
+                    {activeBuildImages.map((image, imageIndex) => {
+                      let offset = imageIndex - activeImageIndex
+                      const halfwayPoint = activeBuildImages.length / 2
+
+                      if (offset > halfwayPoint) {
+                        offset -= activeBuildImages.length
+                      } else if (offset < -halfwayPoint) {
+                        offset += activeBuildImages.length
+                      }
+
+                      const slidePosition =
+                        offset === 0 ? 'center' : offset === -1 ? 'before' : offset === 1 ? 'after' : 'hidden'
+
+                      return (
+                        <figure
+                          className={`carousel-slide carousel-slide-${slidePosition}`}
+                          key={`${image.src}-${image.caption}`}
+                          aria-hidden={slidePosition !== 'center'}
+                        >
+                          <img src={image.src} alt={image.alt} />
+                          <figcaption>{image.caption}</figcaption>
+                        </figure>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="carousel-empty">
+                    <ImageIcon aria-hidden="true" />
+                    <span>Add project screenshots in aboutmeData.ts</span>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="carousel-control next"
+                onClick={showNextImage}
+                aria-label="Next image"
+                disabled={activeBuildImages.length < 2}
+              >
+                <ChevronRight aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="build-modal-content">
+              <p className="build-modal-label">Project details</p>
+              <h2>{activeBuild.title}</h2>
+              {activeBuild.position && (
+                <p className="build-modal-position">
+                  <span>Position/role</span>
+                  {activeBuild.position}
+                </p>
+              )}
+              <p>{activeBuild.details}</p>
+
+              <div className="build-modal-notes">
+                <div>
+                  <span>Challenge</span>
+                  <p>{activeBuild.challenge}</p>
+                </div>
+                <div>
+                  <span>How I resolved it</span>
+                  <p>{activeBuild.solution}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>,
         document.body,

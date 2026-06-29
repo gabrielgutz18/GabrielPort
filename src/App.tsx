@@ -9,7 +9,7 @@ import Projects from './components/projects'
 import gitimg from './assets/github-svgrepo-com.svg'
 import linkedinimg from './assets/linkedin-svgrepo-com.svg'
 import { Typewriter } from 'react-simple-typewriter'
-// removed unused import 'projects'
+
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
                 style={{}}
                 variant="square"
                 pixelSize={2}
-                color="#2a2a2a"
+                color="#1f1e1e"
                 patternScale={4.5}
                 patternDensity={1.2}
                 enableRipples

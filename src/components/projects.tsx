@@ -39,12 +39,12 @@ const Projects = () => {
         <div className="project-header center-text">
           <p className="project-label">Projects</p>
           <div className="project-heading-row">
-            <h1 className="project-title" id="project-heading">My Projects</h1>
-            <p className="project-intro">A collection of projects that showcase my skills and experience in software development, AI, and computer engineering.</p>
+            <h1 className="project-title" id="project-heading">My Website projects</h1>
+            <p className="project-intro">A collection of Website projects that showcase my skills and experience in Website development.</p>
           </div>
 
           <div className="project-divider" aria-hidden="true">
-            <h1>Websites</h1>
+            
           </div>
 
           <div className="project-grid" aria-label="Project list">

@@ -8,7 +8,9 @@ import Aboutme from './components/aboutme'
 import Projects from './components/projects'
 import gitimg from './assets/github-svgrepo-com.svg'
 import linkedinimg from './assets/linkedin-svgrepo-com.svg'
+import resumeFile from './assets/myResume.pdf'
 import { Typewriter } from 'react-simple-typewriter'
+import { FileText } from 'lucide-react'
 
 
 function App() {
@@ -55,6 +57,10 @@ function App() {
               </p>
               <div className="hero-actions">
                 <a className="contact-button" href="#contact">Contact Me</a>
+                <a className="resume-button" href={resumeFile} target="_blank" rel="noreferrer">
+                  <FileText aria-hidden="true" size={22} strokeWidth={2.2} />
+                  <span>View Resume</span>
+                </a>
                 <a className="gitimg" href="https://github.com/gabrielgutz18" aria-label="GitHub">
                   <img src={gitimg} alt="" />
                   <span>Github</span>

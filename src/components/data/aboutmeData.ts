@@ -38,6 +38,13 @@ import sky from '../../images/sky.png'
 import defended from '../../images/defended.png'
 import group from '../../images/group.png'
 import assemble from '../../images/assembly.png'
+import fileServer from '../../images/finishedproduct.png'
+import installation from '../../images/installation.png'
+import nasAssemble from '../../images/nasasemble.png'
+import actualNas from '../../images/actualnas.png'
+import truenas from '../../images/truenas.png'
+import nic from '../../images/nic.png'
+import storage from '../../images/storage.png'
 
 export type AboutSkill = {
   label: string
@@ -188,24 +195,47 @@ export const builds: Build[] = [
       'Remote access needed to be simple while still avoiding unsafe public exposure of the storage server.',
     solution:
       'I configured TrueNAS storage with ZFS RAID-1, used Tailscale for private remote access, and added a 2.5G NIC to improve transfer performance.',
-    images: [],
+    images: [
+      {
+        src: fileServer,
+        alt: 'TrueNAS server setup',
+        caption: 'TrueNAS server setup',
+      },
+      {
+        src: installation,
+        alt: 'Installation of TrueNAS server',
+        caption: 'Installation of TrueNAS server',
+      },
+      {
+        src: nasAssemble,
+        alt: 'NAS assembly',
+        caption: 'NAS assembly',
+      },
+      {
+        src: actualNas,
+        alt: 'NAS assembly',
+        caption: 'Nas assembly and configuration completed',
+      },
+      {
+        src: truenas,
+        alt: 'TrueNAS interface',
+        caption: 'TrueNAS interface',
+      },
+      {
+        src: nic,
+        alt: '2.5G NIC upgrade',
+        caption: '2.5G NIC upgrade',
+      },
+      {
+        src: storage,
+        alt: 'ZFS RAID-1 storage configuration',
+        caption: 'ZFS RAID-1 storage configuration',
+      }
+    ],
     Icon: Server,
     tone: 'warm',
   },
-  {
-    title: 'Arduino project',
-    description:
-      'Developed a simple Arduino project to understand embedded systems and microcontroller programming.',
-    details:
-      'A hands-on embedded systems project used to practice sensor logic, wiring, microcontroller programming, and hardware-software integration.',
-    challenge:
-      'The main challenge was debugging both the physical circuit and the code at the same time.',
-    solution:
-      'I tested the wiring step by step, isolated each component, and adjusted the program until the hardware response matched the expected behavior.',
-    images: [],
-    Icon: Cpu,
-    tone: 'neutral',
-  }
+  
 ]
 
 export const experience = [

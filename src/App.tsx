@@ -73,7 +73,7 @@ function App() {
 
             <div className="hero-visuals">
               <figure className="hero-visual hero-visual--showcase">
-                <img src={heroImage2} alt="Gabriel" />
+                <img src={heroImage2} alt="Gabriel2" />
               </figure>
               <figure className="hero-visual hero-visual--portrait">
                 <img src={heroImage} alt="Gabriel" />

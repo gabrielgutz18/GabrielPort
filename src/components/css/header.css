@@ -95,11 +95,12 @@
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
+  display: none; /* desktop: nav is inline, hamburger hidden */
   flex-direction: column;
   justify-content: space-between;
   flex: 0 0 auto;
   height: 16px;
+  width: 20px;
   padding: 0;
 }
 
@@ -108,23 +109,78 @@
   height: 2px;
   background-color: #ffffff;
   border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
+/* ===== Mobile: collapse nav behind the hamburger ===== */
 @media (max-width: 640px) {
   .site-header {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: column;
-    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo actions"
+      "nav  nav";
+    align-items: center;
+    row-gap: 0;
+    column-gap: 12px;
+    padding: 14px 24px;
   }
 
-  .site-nav {
-    flex-wrap: wrap;
-    gap: 14px 20px;
+  .site-logo {
+    grid-area: logo;
   }
 
   .header-actions {
+    grid-area: actions;
+    width: auto;
+    gap: 12px;
+  }
+
+  /* search takes too much room on a phone top bar — hide it on mobile */
+  .header-search {
+    display: none;
+  }
+
+  .header-menu-btn {
+    display: flex;
+  }
+
+  /* the collapsible nav panel */
+  .site-nav {
+    grid-area: nav;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
     width: 100%;
-    justify-content: space-between;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+  }
+
+  .site-nav a {
+    width: 100%;
+    padding: 13px 2px;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .site-header.nav-open .site-nav {
+    max-height: 320px;
+    opacity: 1;
+    margin-top: 14px;
+  }
+
+  /* hamburger morphs into an X when open */
+  .site-header.nav-open .header-menu-btn span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-header.nav-open .header-menu-btn span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-header.nav-open .header-menu-btn span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 }

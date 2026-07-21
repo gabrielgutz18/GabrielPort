@@ -1,0 +1,375 @@
+.feedback {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54vh;
+  padding: 90px 8%;
+  overflow: hidden;
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 34%),
+    #0a0a0a;
+  color: #ffffff;
+}
+
+.fb-panel {
+  width: 100%;
+  max-width: 1180px;
+}
+
+/* --- Header --- */
+.fb-header {
+  margin-bottom: 42px;
+  text-align: center;
+}
+
+.fb-label {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.fb-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.fb-intro {
+  margin: 0 auto;
+  max-width: 560px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* --- Layout: form left, results right --- */
+.fb-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+/* --- Form (minimal, no container card) --- */
+.fb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.fb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fb-field-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.fb-input {
+  width: 100%;
+  padding: 8px 2px;
+  font-size: 0.95rem;
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+}
+
+.fb-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.fb-input:focus {
+  border-bottom-color: rgba(255, 255, 255, 0.7);
+}
+
+.fb-textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+/* --- Star input --- */
+.fb-rating-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fb-stars-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fb-star-btn {
+  display: inline-flex;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.25);
+  transition: transform 0.12s ease, color 0.12s ease;
+}
+
+.fb-star-btn svg {
+  width: 30px;
+  height: 30px;
+}
+
+.fb-star-btn:hover {
+  transform: scale(1.12);
+}
+
+.fb-star-btn.is-active {
+  color: #ffc738;
+}
+
+.fb-star-btn.is-active svg {
+  fill: #ffc738;
+}
+
+.fb-rating-hint {
+  margin-left: 10px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.fb-error {
+  margin: -4px 0 0;
+  font-size: 0.85rem;
+  color: #ff7a7a;
+}
+
+.fb-submit {
+  margin-top: 4px;
+  padding: 13px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #050505;
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.fb-submit:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.fb-submit:active {
+  transform: translateY(0);
+}
+
+/* --- Results --- */
+.fb-results {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fb-results-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.fb-avg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fb-avg-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.fb-count {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.fb-stars-display {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.fb-star {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.fb-star.is-filled {
+  color: #ffc738;
+  fill: #ffc738;
+}
+
+/* Clipping viewport — the animated track slides behind it. */
+.fb-list {
+  max-height: 520px;
+  overflow: hidden;
+  /* Fade the top and bottom edges so cards ease in/out of view. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.fb-list-track {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* GPU-composited transform animation — runs off the main thread. */
+  animation: fb-scroll linear infinite;
+  will-change: transform;
+}
+
+/* Slide up by exactly one copy (half the doubled content) for a seamless loop. */
+@keyframes fb-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* Pause while a reader is hovering or tabbing through the reviews. */
+.fb-list:hover .fb-list-track,
+.fb-list:focus-within .fb-list-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-list {
+    overflow-y: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .fb-list-track {
+    animation: none;
+  }
+}
+
+.fb-card {
+  /* Trailing margin (not container gap) so the -50% loop tiles perfectly. */
+  margin-bottom: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fb-card.is-new {
+  animation: fb-pop 0.5s ease;
+  border-color: rgba(255, 199, 56, 0.5);
+}
+
+@keyframes fb-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fb-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.fb-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #050505;
+  background: linear-gradient(135deg, #ffffff, #b8b8b8);
+  border-radius: 50%;
+}
+
+.fb-card-id {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.fb-card-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.fb-card-source {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fb-card-comment {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.fb-card-date {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- Responsive --- */
+@media (max-width: 860px) {
+  .feedback {
+    padding: 70px 6%;
+  }
+
+  .fb-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .fb-list {
+    max-height: none;
+  }
+}

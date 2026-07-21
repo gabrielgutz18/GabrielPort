@@ -25,7 +25,7 @@ import {
 import { VscVscode } from 'react-icons/vsc'
 import { BiPointer } from 'react-icons/bi'
 import { BrainCircuit, Code2, Cpu, Layers3, MessageCircle, Sparkles, UsersRound } from 'lucide-react'
-
+import { GridPattern } from "@/components/ui/grid-pattern"
 type SkillItem = string | {
   label: string
   icon: ReactNode
@@ -152,6 +152,10 @@ function Skill() {
 
   return (
     <section className="skill" id="skills" aria-labelledby="skills-heading">
+      <GridPattern
+        strokeDasharray="4 2"
+        className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
+      />
       <div className="skill-logo-loop">
         <LogoLoop
           logos={techLogos}

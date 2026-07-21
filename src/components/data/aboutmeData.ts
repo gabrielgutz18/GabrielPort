@@ -58,6 +58,7 @@ export type Build = {
   position?: string
   challenge: string
   solution: string
+  hint: string
   images: {
     src: string
     alt: string
@@ -103,7 +104,10 @@ export const builds: Build[] = [
       'The biggest challenge was connecting the custom domain, keeping the page fast, and adding contact tools without making the site feel heavy.',
     solution:
       'I deployed through GitHub Pages, tuned the assets and layout, connected EmailJS and Crisp chat, then checked the site with Lighthouse until the performance score stayed high.',
-    images: [
+    hint: 'Tap to view',
+    
+    
+      images: [
       {
         src: nqstvImage,
         alt: 'NQSTV website homepage preview',
@@ -130,6 +134,7 @@ export const builds: Build[] = [
       'The difficult part was combining multiple hardware and software features while keeping the system understandable and reliable.',
     solution:
       'I separated the system into detection, navigation, and safety modules, then planned each part around YOLOv8, thermal sensing, LiDAR, GPS tracking, and return-to-home behavior.',
+    hint: 'Tap to view',
     images: [
       {
         src: drone3dImage,
@@ -195,6 +200,7 @@ export const builds: Build[] = [
       'Remote access needed to be simple while still avoiding unsafe public exposure of the storage server.',
     solution:
       'I configured TrueNAS storage with ZFS RAID-1, used Tailscale for private remote access, and added a 2.5G NIC to improve transfer performance.',
+    hint: 'Tap to view',
     images: [
       {
         src: fileServer,

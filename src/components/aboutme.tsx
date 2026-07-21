@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Award, ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
 import './css/aboutme.css'
 import {
   aboutSkills,
   builds,
   experience,
   facts,
-  stats,
   webinars,
   type Webinar,
 } from './data/aboutmeData'
 import { createCertificateZoom, type CertificateZoom } from './utils/certificateZoom'
+import { GridPattern } from "@/components/ui/grid-pattern"
 
 const AboutMe = () => {
   const [activeCertificate, setActiveCertificate] = useState<CertificateZoom | null>(null)
@@ -88,7 +88,12 @@ const AboutMe = () => {
   }
 
   return (
+
     <section className="aboutme" id="aboutme" aria-labelledby="about-heading">
+      <GridPattern
+        strokeDasharray="4 2"
+        className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
+      />
       <p className="about-label">Hello, Welcome!</p>
 
       <div className="about-layout">
@@ -120,18 +125,9 @@ const AboutMe = () => {
 
           <hr className="about-divider" />
 
-          <div className="stat-grid" role="list" aria-label="Highlights">
-            {stats.map((stat) => (
-              <div className="stat-card" role="listitem" key={stat.label}>
-                <div className="stat-num">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
           <p className="section-title">What I've built</p>
           <ul className="build-list">
-            {builds.map(({ title, description, Icon, tone, href }) => (
+            {builds.map(({ title, description, hint, Icon, tone, href }) => (
               <li className={`build-item ${activeBuildTitle === title ? 'is-active' : ''}`} key={title}>
                 <button
                   type="button"
@@ -146,6 +142,7 @@ const AboutMe = () => {
                   <div className="build-text">
                     <strong>{title}</strong>
                     <span>{description}</span>
+                    {hint && <span className="build-hint">{hint}</span>}
                   </div>
                 </button>
                 {href && (
@@ -194,35 +191,34 @@ const AboutMe = () => {
 
           <hr className="about-divider" />
 
-          <p className="section-title">Certificates</p>
-          <div className="webinar-list" role="list" aria-label="Webinars attended">
+          <p className="section-title">
+            Certificates <span className="section-count">{webinars.length}</span>
+          </p>
+          <div className="cert-list" role="list" aria-label="Certificates">
             {webinars.map((webinar) => (
-              <div className="webinar-card" role="listitem" key={webinar.title}>
-                <div className="webinar-media">
+              <button
+                type="button"
+                className="cert-row"
+                role="listitem"
+                key={webinar.title}
+                onClick={() => openCertificate(webinar)}
+                aria-label={`Open ${webinar.title} certificate`}
+              >
+                <span className="cert-thumb">
                   {webinar.image ? (
-                    <button
-                      type="button"
-                      className="certificate-trigger"
-                      onClick={() => openCertificate(webinar)}
-                      aria-label={`Open ${webinar.title} certificate`}
-                    >
-                      <img src={webinar.image} alt={`${webinar.title} certificate`} />
-                      <span className="certificate-zoom-icon" aria-hidden="true">
-                        <ZoomIn />
-                      </span>
-                    </button>
+                    <img src={webinar.image} alt="" />
                   ) : (
                     <ImageIcon aria-hidden="true" />
                   )}
-                </div>
-                <div className="webinar-text">
-                  <Award aria-hidden="true" />
-                  <div>
-                    <p>{webinar.title}</p>
-                    <span>{webinar.description}</span>
-                  </div>
-                </div>
-              </div>
+                </span>
+                <span className="cert-info">
+                  <span className="cert-title">{webinar.title}</span>
+                  <span className="cert-desc">{webinar.description}</span>
+                </span>
+                <span className="cert-zoom" aria-hidden="true">
+                  <ZoomIn />
+                </span>
+              </button>
             ))}
           </div>
 

@@ -2,6 +2,7 @@ import './App.css'
 import Header from './components/header'
 import Footer from './components/footer'
 import heroImage from './images/myself1.png'
+import heroImage2 from './images/memyself.png'
 import Skill from './components/skill' 
 import PixelBlast from './components/PixelBlast'
 import Aboutme from './components/aboutme'
@@ -10,8 +11,8 @@ import gitimg from './assets/github-svgrepo-com.svg'
 import linkedinimg from './assets/linkedin-svgrepo-com.svg'
 import resumeFile from './assets/myResume.pdf'
 import { Typewriter } from 'react-simple-typewriter'
-import { FileText } from 'lucide-react'
-
+import Feedback from './components/feedback'
+import { Contact2 } from './components/contact2'
 
 function App() {
   return (
@@ -41,7 +42,6 @@ function App() {
           </div> 
       
           <div className="hero-image">
-            <img src={heroImage} alt="Gabriel" />
             <div className="text-content-hero">
               <h1>Welcome to My Portfolio</h1>
               <h2 className="subtitle">I'm Gabriel, a passionate developer.</h2>
@@ -58,7 +58,6 @@ function App() {
               <div className="hero-actions">
                 <a className="contact-button" href="#contact">Contact Me</a>
                 <a className="resume-button" href={resumeFile} target="_blank" rel="noreferrer">
-                  <FileText aria-hidden="true" size={22} strokeWidth={2.2} />
                   <span>View Resume</span>
                 </a>
                 <a className="gitimg" href="https://github.com/gabrielgutz18" aria-label="GitHub">
@@ -71,13 +70,28 @@ function App() {
                 </a>
               </div>
             </div>
+
+            <div className="hero-visuals">
+              <figure className="hero-visual hero-visual--showcase">
+                <img src={heroImage2} alt="Gabriel" />
+              </figure>
+              <figure className="hero-visual hero-visual--portrait">
+                <img src={heroImage} alt="Gabriel" />
+              </figure>
+            </div>
           </div>
       </section>
 
       <Aboutme/>
       <Skill/>
       <Projects/>
-      <Footer/>
+      <Feedback />
+      <div id="contact" className="dark bg-background text-foreground">
+        <Contact2 />
+      </div>
+      <Footer />
+      
+
     </div>
   )
 }

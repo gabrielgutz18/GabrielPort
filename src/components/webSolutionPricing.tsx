@@ -1,7 +1,9 @@
 import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './css/webSolutionPricing.css'
 import Header from './header'
 import Footer from './footer'
+import SectionLink from './sectionLink'
 import { Background } from './pricingBg'
 
 // NOTE: prices below are placeholders — swap in your real rates.
@@ -104,15 +106,15 @@ export default function WebSolutionPricing() {
 
                 {/* Plain anchor, not <Link>: the browser needs to load "/" and
                     scroll to the hash, which client-side routing won't do. */}
-                <a className="ws-cta" href={contactHref(plan.subject)}>
+                <Link className="ws-cta" to={contactHref(plan.subject)}>
                   Get started
-                </a>
+                </Link>
               </article>
             ))}
           </div>
 
           <p className="ws-note">
-            Need something in between? <a href="/#contact">Send me a message</a> and
+            Need something in between? <SectionLink id="contact">Send me a message</SectionLink> and
             we&apos;ll scope it together.
           </p>
         </div>

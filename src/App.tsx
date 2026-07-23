@@ -13,6 +13,7 @@ import resumeFile from './assets/myResume.pdf'
 import { Typewriter } from 'react-simple-typewriter'
 import Feedback from './components/feedback'
 import { Contact2 } from './components/contact2'
+import SectionLink from './components/sectionLink'
 
 function App() {
   return (
@@ -56,7 +57,7 @@ function App() {
                 />
               </p>
               <div className="hero-actions">
-                <a className="contact-button" href="#contact">Contact Me</a>
+                <SectionLink className="contact-button" id="contact">Contact Me</SectionLink>
                 <a className="resume-button" href={resumeFile} target="_blank" rel="noreferrer">
                   <span>View Resume</span>
                 </a>

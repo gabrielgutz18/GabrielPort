@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } f
 import './css/aboutme.css'
 import './css/reveal.css'
 import { useReveal } from '../hooks/useReveal'
+import SectionLink from './sectionLink'
 import {
   aboutSkills,
   builds,
@@ -173,10 +174,10 @@ const AboutMe = () => {
               <strong>Currently open to opportunities</strong> where I can
               build useful systems and keep learning in the real world.
             </p>
-            <a href="#contact" className="cta-btn">
+            <SectionLink id="contact" className="cta-btn">
               <Mail aria-hidden="true" />
               Get in touch
-            </a>
+            </SectionLink>
           </div>
         </div>
 

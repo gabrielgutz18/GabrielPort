@@ -2,21 +2,16 @@ import './css/footer.css'
 import './css/reveal.css'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useLocation } from 'react-router-dom'
 import { X, ZoomIn } from 'lucide-react'
 import logoIcon from '../assets/GW.svg'
 import qrDonation from '../images/GOQR.png'
 import { useReveal } from '../hooks/useReveal'
+import SectionLink from './sectionLink'
 
 function Footer() {
   const year = new Date().getFullYear()
   const [qrZoomed, setQrZoomed] = useState(false)
-  const { pathname } = useLocation()
   const { ref, revealClass } = useReveal<HTMLElement>()
-
-  // Section anchors only resolve on the home page — prefix them elsewhere.
-  const isHome = pathname === '/'
-  const sectionHref = (id: string) => (isHome ? `#${id}` : `/#${id}`)
 
   useEffect(() => {
     if (!qrZoomed) {
@@ -43,10 +38,10 @@ function Footer() {
     <footer ref={ref} className={`site-footer ${revealClass}`}>
       <div className="footer-content">
         <div className="footer-brand reveal-item">
-          <a className="footer-logo" href={sectionHref('home')}>
+          <SectionLink className="footer-logo" id="home">
             <img className="footer-logo-icon" src={logoIcon} alt="" />
             <span className="footer-logo-text">Gabriel.</span>
-          </a>
+          </SectionLink>
           <p className="footer-tagline">
             Computer Engineer &amp; web developer building clean, user-friendly experiences.
           </p>
@@ -88,12 +83,12 @@ function Footer() {
 
         <nav className="footer-links reveal-item reveal-delay-1" aria-label="Footer navigation">
           <h3 className="footer-heading">Explore</h3>
-          <a href={sectionHref('home')}>Home</a>
-          <a href={sectionHref('aboutme')}>About</a>
-          <a href={sectionHref('skills')}>Skills</a>
-          <a href={sectionHref('projects')}>Projects</a>
-          <a href={sectionHref('feedback')}>Feedback</a>
-          <a href={sectionHref('contact')}>Contact</a>
+          <SectionLink id="home">Home</SectionLink>
+          <SectionLink id="aboutme">About</SectionLink>
+          <SectionLink id="skills">Skills</SectionLink>
+          <SectionLink id="projects">Projects</SectionLink>
+          <SectionLink id="feedback">Feedback</SectionLink>
+          <SectionLink id="contact">Contact</SectionLink>
         </nav>
 
         <div className="footer-donate reveal-item reveal-delay-2">

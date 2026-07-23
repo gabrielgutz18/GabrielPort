@@ -1,8 +1,9 @@
 import './css/feedback.css'
 import './css/reveal.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Star } from 'lucide-react'
-import { feedbackSeed, type FeedbackEntry } from './data/feedbackData'
+import { type FeedbackEntry } from './data/feedbackData'
+import { fetchFeedback, submitFeedback } from '../lib/feedback'
 import { useReveal } from '../hooks/useReveal'
 
 const MAX_STARS = 5
@@ -41,7 +42,7 @@ const StarsDisplay = ({ rating }: { rating: number }) => (
 )
 
 const Feedback = () => {
-  const [entries, setEntries] = useState<FeedbackEntry[]>(feedbackSeed)
+  const [entries, setEntries] = useState<FeedbackEntry[]>([])
   const [name, setName] = useState('')
   const [source, setSource] = useState('')
   const [comment, setComment] = useState('')
@@ -49,6 +50,25 @@ const Feedback = () => {
   const [hover, setHover] = useState(0)
   const [error, setError] = useState('')
   const [justAddedId, setJustAddedId] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Load the existing reviews once on mount. A failed fetch just leaves the list
+  // empty — the form still works, so it is not worth blocking the section on.
+  useEffect(() => {
+    let active = true
+    fetchFeedback()
+      .then((data) => {
+        if (active) {
+          setEntries(data)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load feedback:', err)
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
   const averageRating = useMemo(() => {
     if (entries.length === 0) {
@@ -58,9 +78,12 @@ const Feedback = () => {
     return Math.round((total / entries.length) * 10) / 10
   }, [entries])
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    if (submitting) {
+      return
+    }
     if (rating === 0) {
       setError('Please pick a star rating.')
       return
@@ -70,25 +93,32 @@ const Feedback = () => {
       return
     }
 
-    const newEntry: FeedbackEntry = {
-      id: `local-${Date.now()}`,
-      name: name.trim(),
-      source: source.trim() || 'Visitor',
-      rating,
-      comment: comment.trim(),
-      date: new Date().toISOString(),
-    }
-
-    // Newest first. Later: POST newEntry to the database here.
-    setEntries((current) => [newEntry, ...current])
-    setJustAddedId(newEntry.id)
-
-    setName('')
-    setSource('')
-    setComment('')
-    setRating(0)
-    setHover(0)
+    setSubmitting(true)
     setError('')
+
+    try {
+      const saved = await submitFeedback({
+        name: name.trim(),
+        source: source.trim() || 'Visitor',
+        rating,
+        comment: comment.trim(),
+      })
+
+      // Newest first, using the row the database returned (real id + date).
+      setEntries((current) => [saved, ...current])
+      setJustAddedId(saved.id)
+
+      setName('')
+      setSource('')
+      setComment('')
+      setRating(0)
+      setHover(0)
+    } catch (err) {
+      console.error('Failed to submit feedback:', err)
+      setError('Something went wrong sending your feedback. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const activeStars = hover || rating
@@ -183,8 +213,8 @@ const Feedback = () => {
 
             {error && <p className="fb-error">{error}</p>}
 
-            <button type="submit" className="fb-submit">
-              Submit feedback
+            <button type="submit" className="fb-submit" disabled={submitting}>
+              {submitting ? 'Sending…' : 'Submit feedback'}
             </button>
           </form>
 

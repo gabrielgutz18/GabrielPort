@@ -1,0 +1,7 @@
+project_id = "qejildomfttpjximkxid"
+
+# Public contact form: visitors have no Supabase session, so there is no JWT to
+# verify. Abuse protection is the origin allowlist and input validation inside
+# the function, not auth.
+[functions.send-contact-email]
+verify_jwt = false

@@ -24,6 +24,12 @@ const toEntry = (row: FeedbackRow): FeedbackEntry => ({
 
 /** Approved-or-not is not modelled on this table, so every row is returned. */
 export async function fetchFeedback(): Promise<FeedbackEntry[]> {
+  // Unconfigured Supabase: return nothing so the section falls back to its seed
+  // entries instead of surfacing an error.
+  if (!supabase) {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('feedback')
     .select('id, name, source, rating, comment, created_at')
@@ -49,6 +55,10 @@ export type NewFeedback = {
  * so the caller can drop it straight into the list without a refetch.
  */
 export async function submitFeedback(input: NewFeedback): Promise<FeedbackEntry> {
+  if (!supabase) {
+    throw new Error('Feedback is unavailable right now. Please try again later.')
+  }
+
   const { data, error } = await supabase
     .from('feedback')
     .insert(input)

@@ -1,9 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GlobeIcon, LoaderIcon, MailIcon, PhoneIcon } from "lucide-react";
-import { useState } from "react";
+import {
+  CheckIcon,
+  GlobeIcon,
+  LoaderIcon,
+  MailIcon,
+  PhoneIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -16,7 +24,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
+
+import "./css/reveal.css";
 
 interface ContactFormDetailsProps {
   title: string;
@@ -66,6 +77,8 @@ const contactFormSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
+type SubmitStatus = "idle" | "sending" | "sent" | "error";
+
 const Contact2 = (props: Props) => {
   const {
     title,
@@ -82,8 +95,13 @@ const Contact2 = (props: Props) => {
     onSubmit,
   } = { ...defaultProps, ...props };
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const { ref, revealClass } = useReveal<HTMLElement>();
+
+  // Set by the Web Solutions pricing page: /?subject=...#contact seeds the
+  // Subject field with the plan the visitor picked.
+  const [searchParams] = useSearchParams();
+  const presetSubject = searchParams.get("subject") ?? "";
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -93,12 +111,14 @@ const Contact2 = (props: Props) => {
       firstName: "",
       lastName: "",
       email: "",
-      subject: "",
+      subject: presetSubject,
       message: "",
     },
   });
 
   const handleFormSubmit = async (data: ContactFormData) => {
+    setStatus("sending");
+
     try {
       if (onSubmit) {
         await onSubmit(data);
@@ -106,23 +126,54 @@ const Contact2 = (props: Props) => {
         console.log("Form submitted:", data);
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-      setIsSubmitted(true);
-      setShowSuccess(true);
       form.reset();
-      setTimeout(() => setShowSuccess(false), 4500);
-      setTimeout(() => setIsSubmitted(false), 5000);
+      setStatus("sent");
     } catch {
+      setStatus("error");
       form.setError("root", {
         message: "Something went wrong. Please try again.",
       });
     }
   };
 
+  // Dismiss the confirmation on its own; the failure state waits to be closed.
+  useEffect(() => {
+    if (status !== "sent") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => setStatus("idle"), 3200);
+    return () => window.clearTimeout(timeoutId);
+  }, [status]);
+
+  // Escape closes the dialog and the page behind it stops scrolling — except
+  // mid-send, which is not cancellable.
+  useEffect(() => {
+    if (status === "idle") {
+      return;
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && status !== "sending") {
+        setStatus("idle");
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [status]);
+
   return (
-    <section className={cn("py-32", className)}>
-      <div className="container mx-auto">
+    <section ref={ref} className={cn("px-[8%] py-32", revealClass, className)}>
+      <div className="mx-auto w-full max-w-[1180px]">
         <div className="flex flex-col gap-16 lg:flex-row lg:gap-24">
-          <div className="flex flex-1 flex-col gap-10">
+          <div className="reveal-item flex flex-1 flex-col gap-10">
             <div className="flex flex-col gap-4">
               <h1 className="text-4xl font-semibold tracking-tight text-pretty md:text-5xl lg:text-6xl">
                 {title}
@@ -158,7 +209,7 @@ const Contact2 = (props: Props) => {
               </a>
             </div>
           </div>
-          <div className="flex-1">
+          <div className="reveal-item reveal-delay-2 flex-1">
             <form
               onSubmit={form.handleSubmit(handleFormSubmit)}
               className="flex flex-col gap-6 rounded-xl bg-muted/50 p-8 md:p-10"
@@ -171,20 +222,6 @@ const Contact2 = (props: Props) => {
                   {formSubheading}
                 </p>
               </div>
-              {isSubmitted && (
-                <div
-                  role="status"
-                  aria-live="polite"
-                  className={cn(
-                    "rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center transition-opacity duration-500",
-                    showSuccess ? "opacity-100" : "opacity-0",
-                  )}
-                >
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400">
-                    {successMessage}
-                  </p>
-                </div>
-              )}
               <FieldGroup className="gap-6">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Controller
@@ -315,6 +352,69 @@ const Contact2 = (props: Props) => {
           </div>
         </div>
       </div>
+
+      {/* Rendered inside the section rather than portalled to <body> so it
+          inherits the surrounding theme — the home page wraps this section in
+          `dark`, and a portal would escape that and render light. */}
+      {status !== "idle" && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 backdrop-blur-sm"
+          onClick={() => {
+            if (status !== "sending") {
+              setStatus("idle");
+            }
+          }}
+        >
+          <div
+            role={status === "sending" ? "status" : "alertdialog"}
+            aria-live="polite"
+            aria-busy={status === "sending"}
+            onClick={(event) => event.stopPropagation()}
+            className="flex w-full max-w-sm flex-col items-center gap-4 rounded-xl border bg-background p-8 text-center shadow-xl"
+          >
+            <span
+              className={cn(
+                "flex size-11 items-center justify-center rounded-full border",
+                status === "error"
+                  ? "border-destructive/30 text-destructive"
+                  : "border-border text-foreground",
+              )}
+            >
+              {status === "sending" && (
+                <LoaderIcon className="size-5 animate-spin" aria-hidden />
+              )}
+              {status === "sent" && <CheckIcon className="size-5" aria-hidden />}
+              {status === "error" && (
+                <TriangleAlertIcon className="size-5" aria-hidden />
+              )}
+            </span>
+
+            <div className="flex flex-col gap-1.5">
+              <p className="font-medium tracking-tight">
+                {status === "sending" && "Sending your email…"}
+                {status === "sent" && "Email sent"}
+                {status === "error" && "Email not sent"}
+              </p>
+              <p className="text-sm text-balance text-muted-foreground">
+                {status === "sending" && "Hang tight, this only takes a moment."}
+                {status === "sent" && successMessage}
+                {status === "error" &&
+                  "Something went wrong on the way out. Please try again."}
+              </p>
+            </div>
+
+            {status !== "sending" && (
+              <button
+                type="button"
+                onClick={() => setStatus("idle")}
+                className="mt-1 text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+              >
+                Close
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 };

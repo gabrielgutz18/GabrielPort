@@ -1,5 +1,8 @@
 import gvgImage from '../../images/gvg.png'
 import nqstvImage from '../../images/nqstv.png'
+import nqstvImage1 from '../../images/nqstv1.png'
+import nqstvImage2 from '../../images/nqstv2.png'
+import nqstvImage3 from '../../images/nqstv3.png'
 
 export type ProjectImage = {
   src: string
@@ -45,9 +48,19 @@ export const projects: Project[] = [
         caption: 'Live website homepage',
       },
       {
-        src: gvgImage,
-        alt: 'Responsive layout reference',
-        caption: 'Responsive layout reference',
+        src: nqstvImage1,
+        alt: 'NQSTV website feature preview',
+        caption: 'Feature preview',
+      },
+      {
+        src: nqstvImage2,
+        alt: 'NQSTV website contact page preview',
+        caption: 'Contact page preview',
+      },
+      {
+        src: nqstvImage3,
+        alt: 'NQSTV website gallery preview',
+        caption: 'Gallery preview',
       },
     ],
     link: 'https://nqstv.net',

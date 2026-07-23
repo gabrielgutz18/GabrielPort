@@ -44,7 +44,7 @@ function App() {
           <div className="hero-image">
             <div className="text-content-hero">
               <h1>Welcome to My Portfolio</h1>
-              <h2 className="subtitle">I'm Gabriel, a passionate developer.</h2>
+              <h2 className="subtitle">I'm Engr. Gabriel, a passionate Website developer.</h2>
               <p>
                 <Typewriter
                   words={['Computer Engineer with a growing passion for web development, focused on creating clean and user-friendly web experiences.']}

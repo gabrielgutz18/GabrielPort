@@ -1,7 +1,9 @@
 import './css/feedback.css'
+import './css/reveal.css'
 import { useMemo, useState } from 'react'
 import { Star } from 'lucide-react'
 import { feedbackSeed, type FeedbackEntry } from './data/feedbackData'
+import { useReveal } from '../hooks/useReveal'
 
 const MAX_STARS = 5
 
@@ -90,11 +92,12 @@ const Feedback = () => {
   }
 
   const activeStars = hover || rating
+  const { ref, revealClass } = useReveal<HTMLElement>()
 
   return (
-    <section className="feedback" id="feedback">
+    <section ref={ref} className={`feedback ${revealClass}`} id="feedback">
       <div className="fb-panel">
-        <header className="fb-header">
+        <header className="fb-header reveal-item">
           <p className="fb-label">Feedback</p>
           <h2 className="fb-title">Rate my work</h2>
           <p className="fb-intro">
@@ -104,7 +107,11 @@ const Feedback = () => {
 
         <div className="fb-layout">
           {/* --- Rating form --- */}
-          <form className="fb-form" onSubmit={handleSubmit} noValidate>
+          <form
+            className="fb-form reveal-item reveal-delay-1"
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <div className="fb-rating-field">
               <span className="fb-field-label">Your rating</span>
               <div
@@ -182,7 +189,7 @@ const Feedback = () => {
           </form>
 
           {/* --- Live feedback list --- */}
-          <div className="fb-results" aria-live="polite">
+          <div className="fb-results reveal-item reveal-delay-2" aria-live="polite">
             <div className="fb-results-head">
               <div className="fb-avg">
                 <span className="fb-avg-value">{averageRating.toFixed(1)}</span>

@@ -17,10 +17,12 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Keeps the fixed header from covering a section's heading when we land on it. */
 #home,
 #aboutme,
 #skills,
 #projects,
+#feedback,
 #contact {
   scroll-margin-top: 92px;
 }

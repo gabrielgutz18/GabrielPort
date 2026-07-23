@@ -24,9 +24,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { sendContactEmail } from "@/lib/emailjs";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
 
+import "./css/contact.css";
 import "./css/reveal.css";
 
 interface ContactFormDetailsProps {
@@ -123,8 +125,7 @@ const Contact2 = (props: Props) => {
       if (onSubmit) {
         await onSubmit(data);
       } else {
-        console.log("Form submitted:", data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await sendContactEmail(data);
       }
       form.reset();
       setStatus("sent");
@@ -337,7 +338,10 @@ const Contact2 = (props: Props) => {
                     {form.formState.errors.root.message}
                   </p>
                 )}
+                {/* Base UI's Button defaults to type="button"; without this the
+                    click never submits the form. */}
                 <Button
+                  type="submit"
                   size="lg"
                   className="w-full"
                   disabled={form.formState.isSubmitting}
@@ -358,7 +362,7 @@ const Contact2 = (props: Props) => {
           `dark`, and a portal would escape that and render light. */}
       {status !== "idle" && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 backdrop-blur-sm"
+          className="contact-status-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 backdrop-blur-sm"
           onClick={() => {
             if (status !== "sending") {
               setStatus("idle");
@@ -370,7 +374,7 @@ const Contact2 = (props: Props) => {
             aria-live="polite"
             aria-busy={status === "sending"}
             onClick={(event) => event.stopPropagation()}
-            className="flex w-full max-w-sm flex-col items-center gap-4 rounded-xl border bg-background p-8 text-center shadow-xl"
+            className="contact-status-card flex w-full max-w-sm flex-col items-center gap-4 rounded-xl border bg-background p-8 text-center shadow-xl"
           >
             <span
               className={cn(

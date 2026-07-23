@@ -1,0 +1,54 @@
+/* Shared scroll reveal — pair with the useReveal hook.
+   Put `reveal` (+ `reveal-visible` once in view) on the section, and
+   `reveal-item` on the children that should fade up. */
+
+.reveal .reveal-item {
+  opacity: 0;
+  /* The standalone `translate` property, not `transform`: cards across the site
+     use `transform: translateY(...)` for their hover lift, and animating the
+     same property here would cancel that out. These two compose instead. */
+  translate: 0 26px;
+  transition: opacity 650ms ease, translate 650ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, translate;
+}
+
+.reveal-visible .reveal-item {
+  opacity: 1;
+  translate: 0 0;
+  will-change: auto;
+}
+
+/* Stagger helpers — add alongside `reveal-item`. */
+.reveal-delay-1 {
+  --reveal-delay: 80ms;
+}
+
+.reveal-delay-2 {
+  --reveal-delay: 160ms;
+}
+
+.reveal-delay-3 {
+  --reveal-delay: 240ms;
+}
+
+.reveal-delay-4 {
+  --reveal-delay: 320ms;
+}
+
+.reveal-delay-5 {
+  --reveal-delay: 400ms;
+}
+
+.reveal-delay-6 {
+  --reveal-delay: 480ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal .reveal-item,
+  .reveal-visible .reveal-item {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+}

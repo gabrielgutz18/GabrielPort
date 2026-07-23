@@ -1,0 +1,256 @@
+.websolutions {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 150px 8% 110px;
+  /* No background here — the <Background /> grid layer sits behind the content. */
+  color: #0a0a0a;
+}
+
+.ws-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1180px;
+}
+
+/* --- Reveal on load --- */
+/* "backwards" (not "both"): the element holds the hidden state through its
+   delay, then hands the properties back once the run finishes — which keeps
+   .ws-card:hover free to apply its own transform afterwards. */
+@keyframes wsFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Header --- */
+.ws-header {
+  margin-bottom: 56px;
+  text-align: center;
+}
+
+.ws-label {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 10, 0.45);
+  animation: wsFadeUp 700ms ease backwards;
+}
+
+.ws-title {
+  margin: 0 auto 18px;
+  max-width: 760px;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  animation: wsFadeUp 700ms 100ms ease backwards;
+}
+
+.ws-subtitle {
+  margin: 0 auto;
+  max-width: 620px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(10, 10, 10, 0.6);
+  animation: wsFadeUp 700ms 200ms ease backwards;
+}
+
+/* --- Cards --- */
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  /* stretch (not start) so every card fills the tallest row height — the
+     flex:1 on .ws-features then lands all three CTAs on the same baseline. */
+  align-items: stretch;
+}
+
+.ws-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 30px;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  animation: wsFadeUp 700ms ease backwards;
+}
+
+.ws-card:nth-child(1) {
+  animation-delay: 320ms;
+}
+
+.ws-card:nth-child(2) {
+  animation-delay: 420ms;
+}
+
+.ws-card:nth-child(3) {
+  animation-delay: 520ms;
+}
+
+.ws-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(10, 10, 10, 0.2);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+}
+
+.ws-card--featured {
+  border-color: rgba(10, 10, 10, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 34px rgba(15, 23, 42, 0.1);
+}
+
+.ws-badge {
+  position: absolute;
+  top: -12px;
+  left: 30px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #0a0a0a;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ws-card-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.ws-card-cadence {
+  margin: 14px 0 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 10, 0.45);
+}
+
+.ws-card-price {
+  margin: 0 0 14px;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ws-card-summary {
+  margin: 0 0 24px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(10, 10, 10, 0.6);
+}
+
+.ws-features {
+  flex: 1;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ws-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: rgba(10, 10, 10, 0.8);
+}
+
+.ws-check {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin-top: 3px;
+  color: rgba(10, 10, 10, 0.5);
+}
+
+.ws-cta {
+  display: block;
+  padding: 13px 20px;
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  border-radius: 12px;
+  background: transparent;
+  color: #0a0a0a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.ws-cta:hover {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #ffffff;
+}
+
+.ws-card--featured .ws-cta {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #ffffff;
+}
+
+.ws-card--featured .ws-cta:hover {
+  background: rgba(10, 10, 10, 0.85);
+}
+
+/* --- Footnote --- */
+.ws-note {
+  margin: 48px 0 0;
+  text-align: center;
+  font-size: 0.95rem;
+  color: rgba(10, 10, 10, 0.55);
+  animation: wsFadeUp 700ms 640ms ease backwards;
+}
+
+.ws-note a {
+  color: #0a0a0a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-label,
+  .ws-title,
+  .ws-subtitle,
+  .ws-card,
+  .ws-note {
+    animation: none;
+  }
+
+  .ws-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .ws-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 860px) {
+  .websolutions {
+    padding: 120px 6% 80px;
+  }
+}

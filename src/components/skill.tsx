@@ -1,6 +1,8 @@
 import './css/skill.css'
+import './css/reveal.css'
 import type { ReactNode } from 'react'
 import LogoLoop from './LogoLoop'
+import { useReveal } from '../hooks/useReveal'
 import {
   SiArduino,
   SiCanva,
@@ -134,6 +136,8 @@ const focusAreas = [
 ]
 
 function Skill() {
+  const { ref, revealClass } = useReveal<HTMLElement>()
+
   const renderSkill = (skill: SkillItem) => {
     if (typeof skill === 'string') {
       return skill
@@ -151,7 +155,12 @@ function Skill() {
     typeof skill === 'string' ? skill : skill.label
 
   return (
-    <section className="skill" id="skills" aria-labelledby="skills-heading">
+    <section
+      ref={ref}
+      className={`skill ${revealClass}`}
+      id="skills"
+      aria-labelledby="skills-heading"
+    >
       <GridPattern
         strokeDasharray="4 2"
         className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
@@ -171,7 +180,7 @@ function Skill() {
         />
       </div>
 
-      <div className="skill-header">
+      <div className="skill-header reveal-item">
         <p className="skill-label">Technical toolkit</p>
         <div className="skill-heading-row">
           <h1 className="skill-title" id="skills-heading">
@@ -186,8 +195,12 @@ function Skill() {
 
       <div className="skill-layout">
         <div className="skill-grid" role="list" aria-label="Technical skill groups">
-          {skillGroups.map(({ title, summary, Icon, skills }) => (
-            <article className="skill-card" role="listitem" key={title}>
+          {skillGroups.map(({ title, summary, Icon, skills }, index) => (
+            <article
+              className={`skill-card reveal-item reveal-delay-${Math.min(index + 1, 6)}`}
+              role="listitem"
+              key={title}
+            >
               <div className="skill-card-top">
                 <span className="skill-card-icon">
                   <Icon aria-hidden="true" />
@@ -204,7 +217,10 @@ function Skill() {
           ))}
         </div>
 
-        <aside className="soft-skill-card" aria-labelledby="soft-skills-heading">
+        <aside
+          className="soft-skill-card reveal-item reveal-delay-2"
+          aria-labelledby="soft-skills-heading"
+        >
           <div className="soft-card-header">
             <span className="soft-card-icon">
               <Sparkles aria-hidden="true" />
@@ -235,13 +251,20 @@ function Skill() {
       </div>
 
       <div className="skill-focus-grid" role="list" aria-label="Current focus areas">
-        {focusAreas.map((area) => (
-          <div className="skill-focus-card" role="listitem" key={area.value}>
+        {focusAreas.map((area, index) => (
+          <div
+            className={`skill-focus-card reveal-item reveal-delay-${index + 1}`}
+            role="listitem"
+            key={area.value}
+          >
             <strong>{area.value}</strong>
             <span>{area.label}</span>
           </div>
         ))}
-        <div className="skill-focus-card skill-focus-card-dark" role="listitem">
+        <div
+          className="skill-focus-card skill-focus-card-dark reveal-item reveal-delay-4"
+          role="listitem"
+        >
           <MessageCircle aria-hidden="true" />
           <span>Ready to collaborate on practical, user-friendly builds.</span>
         </div>

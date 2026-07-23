@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
 import './css/aboutme.css'
+import './css/reveal.css'
+import { useReveal } from '../hooks/useReveal'
 import {
   aboutSkills,
   builds,
@@ -19,6 +21,7 @@ const AboutMe = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const activeBuild = builds.find((build) => build.title === activeBuildTitle)
   const activeBuildImages = activeBuild?.images ?? []
+  const { ref, revealClass } = useReveal<HTMLElement>()
 
   useEffect(() => {
     if (!activeCertificate && !activeBuildTitle) {
@@ -89,15 +92,20 @@ const AboutMe = () => {
 
   return (
 
-    <section className="aboutme" id="aboutme" aria-labelledby="about-heading">
+    <section
+      ref={ref}
+      className={`aboutme ${revealClass}`}
+      id="aboutme"
+      aria-labelledby="about-heading"
+    >
       <GridPattern
         strokeDasharray="4 2"
         className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
       />
-      <p className="about-label">Hello, Welcome!</p>
+      <p className="about-label reveal-item">Hello, Welcome!</p>
 
       <div className="about-layout">
-        <div className="about-main">
+        <div className="about-main reveal-item reveal-delay-1">
           <h1 className="about-title" id="about-heading">
             About me<span>.</span>
           </h1>
@@ -107,7 +115,7 @@ const AboutMe = () => {
           </blockquote>
 
           <p className="about-intro">
-            "Computer Engineering student specializing in web development, IT support, and systems engineering. Experienced in academic projects, freelance design work, Arduino systems, and internship-based web development and NAS setup."
+            "Computer Engineer specializing in web development, IT support, and systems engineering. Experienced in academic projects, freelance design work, Arduino systems, and internship-based web development and NAS setup."
           </p>
 
           <p className="about-intro">
@@ -172,7 +180,10 @@ const AboutMe = () => {
           </div>
         </div>
 
-        <aside className="about-side" aria-label="Experience and activity">
+        <aside
+          className="about-side reveal-item reveal-delay-2"
+          aria-label="Experience and activity"
+        >
           <p className="section-title">Experience</p>
           <div className="timeline" role="list" aria-label="Experience timeline">
             {experience.map((item) => (

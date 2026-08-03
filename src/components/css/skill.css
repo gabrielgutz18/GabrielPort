@@ -1,6 +1,6 @@
 .skill {
   position: relative;
-  padding: 72px 8% 88px;
+  padding: 80px var(--page-gutter) 92px;
   color: #111111;
 }
 
@@ -22,13 +22,16 @@
   opacity: 0.72;
 }
 
+/* Full-bleed: the negative margin cancels the section's gutter so the marquee
+   runs edge to edge, held off the viewport by --bleed-inset. It is the only
+   element on the page that breaks the container — the motion reads better
+   when the logos travel the full width rather than a centred column. */
 .skill-logo-loop {
   position: relative;
   display: flex;
   align-items: center;
-  max-width: 1180px;
   height: 120px;
-  margin: 0 auto 34px;
+  margin: 0 var(--bleed-pull) 40px;
   overflow: hidden;
   color: #000000;
 }
@@ -36,7 +39,7 @@
 .skill-header,
 .skill-layout,
 .skill-focus-grid {
-  max-width: 1180px;
+  max-width: var(--page-max);
   margin-right: auto;
   margin-left: auto;
 }
@@ -412,7 +415,8 @@
 
 @media (max-width: 640px) {
   .skill {
-    padding: 50px 24px 64px;
+    padding-top: 50px;
+    padding-bottom: 64px;
   }
 
   .skill-logo-loop {

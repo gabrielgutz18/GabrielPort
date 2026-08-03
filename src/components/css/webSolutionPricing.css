@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  padding: 150px 8% 110px;
+  padding: 150px var(--page-gutter) 110px;
   /* No background here — the <Background /> grid layer sits behind the content. */
   color: #0a0a0a;
 }
@@ -12,7 +12,9 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1180px;
+  /* Below --page-max on purpose: three pricing cards stretched to 1600px read
+     as too wide, so this panel keeps its own tighter cap. */
+  max-width: 1320px;
 }
 
 /* --- Reveal on load --- */
@@ -251,6 +253,7 @@
 
 @media (max-width: 860px) {
   .websolutions {
-    padding: 120px 6% 80px;
+    padding-top: 120px;
+    padding-bottom: 80px;
   }
 }

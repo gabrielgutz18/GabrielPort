@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   min-height: 54vh;
-  padding: 90px 8%;
+  padding: 96px var(--page-gutter);
   overflow: hidden;
   background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 34%),
     #0a0a0a;
@@ -14,7 +14,10 @@
 
 .fb-panel {
   width: 100%;
-  max-width: 1180px;
+  max-width: var(--page-max);
+  /* Flex item of .feedback — without this it refuses to shrink below the
+     min-content width of the form inside it. */
+  min-width: 0;
 }
 
 /* --- Header --- */
@@ -50,7 +53,7 @@
 .fb-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 32px;
+  gap: clamp(28px, 3vw, 56px);
   align-items: start;
 }
 
@@ -59,6 +62,7 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
+  min-width: 0;
 }
 
 .fb-field {
@@ -99,6 +103,10 @@
 .fb-textarea {
   resize: vertical;
   min-height: 84px;
+  /* Overrides the intrinsic `cols` width so the textarea can shrink with the
+     column instead of dictating it. */
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* --- Star input --- */
@@ -180,6 +188,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
 }
 
 .fb-results-head {
@@ -279,6 +288,121 @@
   }
 }
 
+/* ===== Empty & loading states =====
+   Neither scrolls, so the edge fade and the clipped height that the marquee
+   needs are dropped for them. */
+.fb-list:has(.fb-empty),
+.fb-list:has(.fb-skeleton-list) {
+  max-height: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.fb-avg-placeholder {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.fb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 44px 28px;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+}
+
+.fb-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fb-empty-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #ffc738;
+}
+
+.fb-empty-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.fb-empty-text {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.fb-skeleton-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fb-card--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.fb-skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.05) 35%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 65%
+  );
+  background-size: 220% 100%;
+  animation: fb-shimmer 1.5s ease-in-out infinite;
+}
+
+.fb-skeleton--avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+
+.fb-skeleton--line {
+  height: 10px;
+  width: 100%;
+}
+
+.fb-skeleton--line.is-short {
+  width: 55%;
+}
+
+@keyframes fb-shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-skeleton {
+    animation: none;
+  }
+}
+
 .fb-card {
   /* Trailing margin (not container gap) so the -50% loop tiles perfectly. */
   margin-bottom: 14px;
@@ -361,15 +485,35 @@
 /* --- Responsive --- */
 @media (max-width: 860px) {
   .feedback {
-    padding: 70px 6%;
+    padding-top: 70px;
+    padding-bottom: 70px;
   }
 
+  /* minmax(0, 1fr), not 1fr: a bare 1fr track floors at min-content, and the
+     textarea's intrinsic `cols` width is wider than a phone — which pushed the
+     whole column past the viewport. minmax(0, …) lets it shrink. */
   .fb-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 26px;
   }
 
   .fb-list {
     max-height: none;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Five 30px stars + the hint no longer fit on one line. */
+  .fb-stars-input {
+    flex-wrap: wrap;
+  }
+
+  .fb-rating-hint {
+    margin-left: 0;
+  }
+
+  .fb-star-btn svg {
+    width: 26px;
+    height: 26px;
   }
 }

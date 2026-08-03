@@ -171,9 +171,14 @@ const Contact2 = (props: Props) => {
   }, [status]);
 
   return (
-    <section ref={ref} className={cn("px-[8%] py-32", revealClass, className)}>
-      <div className="mx-auto w-full max-w-[1180px]">
-        <div className="flex flex-col gap-16 lg:flex-row lg:gap-24">
+    // Same container tokens as the CSS-styled sections (see App.css :root) so
+    // the contact block lines up with everything above it.
+    <section
+      ref={ref}
+      className={cn("px-[var(--page-gutter)] py-28", revealClass, className)}
+    >
+      <div className="mx-auto w-full max-w-[var(--page-max)]">
+        <div className="flex flex-col gap-16 lg:flex-row lg:gap-20">
           <div className="reveal-item flex flex-1 flex-col gap-10">
             <div className="flex flex-col gap-4">
               <h1 className="text-4xl font-semibold tracking-tight text-pretty md:text-5xl lg:text-6xl">

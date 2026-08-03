@@ -51,6 +51,7 @@ const Feedback = () => {
   const [error, setError] = useState('')
   const [justAddedId, setJustAddedId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // Load the existing reviews once on mount. A failed fetch just leaves the list
   // empty — the form still works, so it is not worth blocking the section on.
@@ -64,6 +65,11 @@ const Feedback = () => {
       })
       .catch((err) => {
         console.error('Failed to load feedback:', err)
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
       })
     return () => {
       active = false
@@ -221,51 +227,93 @@ const Feedback = () => {
           {/* --- Live feedback list --- */}
           <div className="fb-results reveal-item reveal-delay-2" aria-live="polite">
             <div className="fb-results-head">
-              <div className="fb-avg">
-                <span className="fb-avg-value">{averageRating.toFixed(1)}</span>
-                <StarsDisplay rating={Math.round(averageRating)} />
-              </div>
+              {/* An average of "0.0" out of no reviews reads as a bad score
+                  rather than "nothing yet", so the score only appears once
+                  there is something to average. */}
+              {entries.length > 0 ? (
+                <div className="fb-avg">
+                  <span className="fb-avg-value">{averageRating.toFixed(1)}</span>
+                  <StarsDisplay rating={Math.round(averageRating)} />
+                </div>
+              ) : (
+                <span className="fb-avg-placeholder">
+                  {loading ? 'Loading reviews…' : 'No rating yet'}
+                </span>
+              )}
               <span className="fb-count">
-                {entries.length} {entries.length === 1 ? 'review' : 'reviews'}
+                {loading
+                  ? '—'
+                  : `${entries.length} ${entries.length === 1 ? 'review' : 'reviews'}`}
               </span>
             </div>
 
             <div className="fb-list">
-              {/* Track is animated with a GPU-composited CSS transform (not JS
-                  scrollTop), so it stays smooth. Two full copies back-to-back
-                  make the -50% loop seamless; the second is hidden from a11y.
-                  Duration scales with the number of reviews for constant speed;
-                  `key` restarts the animation from the top when one is added. */}
-              <ul
-                className="fb-list-track"
-                key={entries.length}
-                style={{ animationDuration: `${entries.length * 5}s` }}
-              >
-                {[0, 1].map((copy) =>
-                  entries.map((entry) => (
-                    <li
-                      key={`${entry.id}-${copy}`}
-                      className={`fb-card ${
-                        copy === 0 && entry.id === justAddedId ? 'is-new' : ''
-                      }`}
-                      aria-hidden={copy === 1 ? true : undefined}
-                    >
+              {loading ? (
+                /* Skeleton keeps the column at its settled height so the
+                   section does not jump when the fetch resolves. */
+                <ul className="fb-skeleton-list" aria-hidden="true">
+                  {[0, 1, 2].map((row) => (
+                    <li className="fb-card fb-card--skeleton" key={row}>
                       <div className="fb-card-top">
-                        <span className="fb-avatar" aria-hidden="true">
-                          {initials(entry.name) || '?'}
-                        </span>
+                        <span className="fb-skeleton fb-skeleton--avatar" />
                         <div className="fb-card-id">
-                          <span className="fb-card-name">{entry.name}</span>
-                          <span className="fb-card-source">{entry.source}</span>
+                          <span className="fb-skeleton fb-skeleton--line" />
+                          <span className="fb-skeleton fb-skeleton--line is-short" />
                         </div>
-                        <StarsDisplay rating={entry.rating} />
                       </div>
-                      <p className="fb-card-comment">{entry.comment}</p>
-                      <span className="fb-card-date">{formatDate(entry.date)}</span>
+                      <span className="fb-skeleton fb-skeleton--line" />
+                      <span className="fb-skeleton fb-skeleton--line is-short" />
                     </li>
-                  ))
-                )}
-              </ul>
+                  ))}
+                </ul>
+              ) : entries.length === 0 ? (
+                <div className="fb-empty">
+                  <span className="fb-empty-icon" aria-hidden="true">
+                    <Star />
+                  </span>
+                  <p className="fb-empty-title">No reviews yet</p>
+                  <p className="fb-empty-text">
+                    Be the first to leave one — your rating shows up here as soon as
+                    you submit it.
+                  </p>
+                </div>
+              ) : (
+                /* Track is animated with a GPU-composited CSS transform (not JS
+                    scrollTop), so it stays smooth. Two full copies back-to-back
+                    make the -50% loop seamless; the second is hidden from a11y.
+                    Duration scales with the number of reviews for constant speed;
+                    `key` restarts the animation from the top when one is added. */
+                <ul
+                  className="fb-list-track"
+                  key={entries.length}
+                  style={{ animationDuration: `${entries.length * 5}s` }}
+                >
+                  {[0, 1].map((copy) =>
+                    entries.map((entry) => (
+                      <li
+                        key={`${entry.id}-${copy}`}
+                        className={`fb-card ${
+                          copy === 0 && entry.id === justAddedId ? 'is-new' : ''
+                        }`}
+                        aria-hidden={copy === 1 ? true : undefined}
+                      >
+                        <div className="fb-card-top">
+                          <span className="fb-avatar" aria-hidden="true">
+                            {initials(entry.name) || '?'}
+                          </span>
+                          <div className="fb-card-id">
+                            <span className="fb-card-name">{entry.name}</span>
+                            <span className="fb-card-source">{entry.source}</span>
+                          </div>
+                          <StarsDisplay rating={entry.rating} />
+                        </div>
+                        <p className="fb-card-comment">{entry.comment}</p>
+                        <span className="fb-card-date">{formatDate(entry.date)}</span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
             </div>
           </div>
         </div>

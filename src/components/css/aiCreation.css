@@ -1,0 +1,792 @@
+/* ===== AI Creation page =====
+   Dark counterpart to the rest of the site: same Inter type scale, same 18px
+   card radius and 999px chips, but on a near-black canvas lit by ambient
+   white blooms. Strictly monochrome — no hue anywhere, only black/white/grey. */
+
+.ai-page {
+  --ai-bg: #060607;
+  --ai-surface: rgba(255, 255, 255, 0.045);
+  --ai-surface-strong: rgba(255, 255, 255, 0.075);
+  --ai-line: rgba(255, 255, 255, 0.1);
+  --ai-line-strong: rgba(255, 255, 255, 0.2);
+  --ai-text: #f4f4f5;
+  --ai-muted: rgba(244, 244, 245, 0.6);
+  --ai-faint: rgba(244, 244, 245, 0.42);
+  /* Single accent: plain white at varying strength. */
+  --ai-accent: rgba(255, 255, 255, 0.55);
+  --ai-halo: rgba(255, 255, 255, 0.14);
+
+  position: relative;
+  background: var(--ai-bg);
+  color: var(--ai-text);
+}
+
+/* ===== Ambient glow layer ===== */
+.ai-glow-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ai-glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  /* Blur rather than a hard gradient stop — keeps the bloom soft at any size. */
+  filter: blur(100px);
+  animation: aiDrift 20s ease-in-out infinite alternate;
+}
+
+.ai-glow--one {
+  top: -12vh;
+  left: -6vw;
+  width: 42vw;
+  height: 42vw;
+  min-width: 360px;
+  min-height: 360px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 68%);
+}
+
+.ai-glow--two {
+  top: 30vh;
+  right: -10vw;
+  width: 38vw;
+  height: 38vw;
+  min-width: 320px;
+  min-height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 68%);
+  animation-delay: -7s;
+}
+
+.ai-glow--three {
+  bottom: -16vh;
+  left: 30vw;
+  width: 36vw;
+  height: 36vw;
+  min-width: 300px;
+  min-height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 70%);
+  animation-delay: -14s;
+}
+
+.ai-grid {
+  position: absolute;
+  inset: 0;
+  /* Whole-pixel cells + 1px hard stop, same trick as the light-mode grid. */
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 96px 64px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 78%);
+}
+
+@keyframes aiDrift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3vw, 5vh, 0) scale(1.1);
+  }
+}
+
+/* ===== Layout =====
+   Shares the site-wide container tokens defined in App.css :root, so this page
+   lines up with the home page rather than using its own width. */
+.ai-main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  /* The cap has to include the gutters, otherwise the content box lands at
+     --page-max minus padding and sits further in than every other page. */
+  max-width: calc(var(--page-max) + var(--page-gutter) * 2);
+  margin: 0 auto;
+  padding: 124px var(--page-gutter) 96px;
+}
+
+.ai-section {
+  margin-top: clamp(64px, 6vw, 104px);
+  scroll-margin-top: 92px;
+}
+
+.ai-section-head {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.ai-section-title {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 2.4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+}
+
+.ai-section-text {
+  margin: 0;
+  color: var(--ai-muted);
+  font-size: clamp(14px, 0.95vw, 15.5px);
+  line-height: 1.65;
+}
+
+/* ===== Shared label (mirrors .project-label) ===== */
+.ai-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 6px 13px 6px 10px;
+  border: 1px solid var(--ai-line);
+  border-radius: 999px;
+  background: var(--ai-surface);
+  color: var(--ai-text);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ai-label-icon {
+  width: 13px;
+  height: 13px;
+  color: var(--ai-accent);
+}
+
+/* ===== Hero ===== */
+.ai-hero {
+  /* Two columns at desktop so the copy and the stat rail share the row
+     instead of stacking into a tall, half-empty band. */
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: end;
+  scroll-margin-top: 92px;
+}
+
+.ai-hero-title {
+  margin: 0 0 16px;
+  font-size: clamp(32px, 3.4vw, 54px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.ai-hero-accent {
+  background: linear-gradient(100deg, #ffffff, rgba(255, 255, 255, 0.42));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ai-hero-text {
+  margin: 0 0 26px;
+  max-width: 62ch;
+  color: var(--ai-muted);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.7;
+}
+
+.ai-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.ai-btn--primary {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.ai-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+.ai-btn--ghost {
+  border-color: var(--ai-line-strong);
+  background: var(--ai-surface);
+  color: var(--ai-text);
+}
+
+.ai-btn--ghost:hover {
+  background: var(--ai-surface-strong);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ai-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Stat rail — sits in the hero's second column, one card per row. */
+.ai-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.ai-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+  border: 1px solid var(--ai-line);
+  border-radius: 14px;
+  background: var(--ai-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.ai-stat dt {
+  margin: 0;
+  color: var(--ai-faint);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ai-stat dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ===== Chips ===== */
+.ai-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--ai-line);
+  border-radius: 999px;
+  background: rgba(6, 6, 7, 0.6);
+  color: var(--ai-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ai-chip--duration {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ai-text);
+}
+
+/* ===== Media frame + placeholder ===== */
+.ai-media {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+}
+
+.ai-media--video {
+  aspect-ratio: 16 / 9;
+  border-bottom: 1px solid var(--ai-line);
+}
+
+.ai-media--image {
+  height: 100%;
+}
+
+.ai-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000000;
+}
+
+.ai-placeholder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.09), transparent 62%),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 11px
+    );
+}
+
+/* Slow light sweep so an empty slot still feels alive. */
+.ai-placeholder-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 65%
+  );
+  background-size: 220% 100%;
+  animation: aiShimmer 3.4s ease-in-out infinite;
+}
+
+@keyframes aiShimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+.ai-placeholder-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  text-align: center;
+}
+
+.ai-placeholder-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.14);
+}
+
+.ai-placeholder-icon svg {
+  width: 19px;
+  height: 19px;
+  color: rgba(244, 244, 245, 0.82);
+}
+
+.ai-placeholder-label {
+  color: var(--ai-faint);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ===== Video showcase ===== */
+.ai-video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.ai-video-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ai-line);
+  border-radius: 18px;
+  background: var(--ai-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ai-video-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 30px var(--ai-halo);
+}
+
+.ai-video-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+
+.ai-video-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-video-heading h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.ai-video-summary {
+  margin: 0;
+  color: var(--ai-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.ai-prompt-line {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--ai-line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(244, 244, 245, 0.72);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.ai-prompt-tag {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ai-accent);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ===== Image gallery =====
+   Four columns with mixed spans. The six tiles' spans total exactly 8, so both
+   rows pack full-width with no dead columns, while the differing aspect ratios
+   keep the masonry feel — the gallery's own treatment, still on the site's
+   card shapes. */
+.ai-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 16px;
+  align-items: start;
+}
+
+.ai-tile {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--ai-line);
+  border-radius: 18px;
+  background: var(--ai-surface);
+  transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+}
+
+.ai-tile--tall {
+  grid-column: span 1;
+  aspect-ratio: 4 / 5;
+}
+
+.ai-tile--wide {
+  grid-column: span 2;
+  aspect-ratio: 16 / 9;
+}
+
+.ai-tile--square {
+  grid-column: span 1;
+  aspect-ratio: 1 / 1;
+}
+
+.ai-tile:hover,
+.ai-tile:focus-within {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.6), 0 0 34px var(--ai-halo);
+}
+
+.ai-tile-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.ai-tile:hover .ai-tile-img {
+  transform: scale(1.05);
+}
+
+.ai-tile-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(4, 4, 5, 0.94), rgba(4, 4, 5, 0.62) 55%, transparent);
+}
+
+.ai-tile-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ai-tile-heading h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* Prompt stays tucked away until the tile is hovered or keyboard-focused. */
+.ai-tile-prompt {
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  color: var(--ai-muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  transition: max-height 0.32s ease, opacity 0.32s ease, margin 0.32s ease;
+}
+
+.ai-tile:hover .ai-tile-prompt,
+.ai-tile:focus-within .ai-tile-prompt {
+  max-height: 140px;
+  margin-top: 9px;
+  opacity: 1;
+}
+
+/* ===== How I prompt ===== */
+.ai-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.ai-prompt-card {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 24px 24px;
+  border: 1px solid var(--ai-line);
+  border-radius: 18px;
+  background: var(--ai-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ai-prompt-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 30px var(--ai-halo);
+}
+
+.ai-prompt-step {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.1);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.ai-prompt-title {
+  margin: 0 0 5px;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ai-prompt-tagline {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.ai-prompt-body {
+  flex: 1;
+  margin: 0 0 18px;
+  color: var(--ai-muted);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.ai-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ai-compare-row {
+  padding: 11px 13px;
+  border: 1px solid var(--ai-line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.ai-compare-row p {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.ai-compare-row--weak p {
+  color: rgba(244, 244, 245, 0.48);
+  text-decoration: line-through;
+  text-decoration-color: rgba(244, 244, 245, 0.28);
+}
+
+.ai-compare-row--strong {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.ai-compare-row--strong p {
+  color: rgba(244, 244, 245, 0.9);
+}
+
+.ai-compare-tag {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ai-faint);
+}
+
+.ai-compare-row--strong .ai-compare-tag {
+  color: var(--ai-accent);
+}
+
+.ai-closing {
+  margin: 40px 0 0;
+  text-align: center;
+  color: var(--ai-muted);
+  font-size: 0.92rem;
+}
+
+.ai-closing a {
+  color: var(--ai-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1180px) {
+  .ai-hero {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ai-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .ai-stat {
+    flex: 1 1 200px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .ai-stat dd {
+    text-align: left;
+  }
+
+  .ai-prompt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .ai-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 2 columns: tall/square take one each, wide takes the full row. */
+  .ai-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ai-tile--wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 860px) {
+  .ai-main {
+    padding-top: 110px;
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 680px) {
+  .ai-video-grid,
+  .ai-prompt-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ai-gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ai-tile--tall,
+  .ai-tile--wide,
+  .ai-tile--square {
+    grid-column: span 1;
+  }
+
+  /* No hover on touch — show the prompt outright. */
+  .ai-tile-prompt {
+    max-height: 140px;
+    margin-top: 9px;
+    opacity: 1;
+  }
+
+  .ai-btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-glow,
+  .ai-placeholder-shimmer {
+    animation: none;
+  }
+
+  .ai-video-card:hover,
+  .ai-prompt-card:hover,
+  .ai-tile:hover,
+  .ai-btn--primary:hover {
+    transform: none;
+  }
+
+  .ai-tile:hover .ai-tile-img {
+    transform: none;
+  }
+}

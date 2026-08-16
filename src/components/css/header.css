@@ -7,7 +7,10 @@
   align-items: center;
   gap: 40px;
   width: 100%;
-  padding: 18px 8%;
+  /* Tracks the page container: hugs the gutter until the viewport is wider than
+     --page-max, then matches the centred content's left/right edge so the logo
+     lines up with each section below it. */
+  padding: 18px max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
   background-color: rgba(255, 255, 255, 0.55);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   backdrop-filter: blur(18px) saturate(160%);
@@ -69,6 +72,35 @@
   margin-left: auto;
 }
 
+/* Solid black pill at the far right — the one nav item styled as a button. */
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.header-cta:hover {
+  background: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.28);
+}
+
+.header-cta:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 3px;
+}
+
 .header-menu-btn {
   background: none;
   border: none;
@@ -101,7 +133,8 @@
     align-items: center;
     row-gap: 0;
     column-gap: 12px;
-    padding: 14px 24px;
+    padding-top: 14px;
+    padding-bottom: 14px;
   }
 
   .site-logo {
@@ -116,6 +149,12 @@
 
   .header-menu-btn {
     display: flex;
+  }
+
+  /* Stays visible beside the hamburger, just tighter. */
+  .header-cta {
+    padding: 8px 14px;
+    font-size: 13px;
   }
 
   /* the collapsible nav panel */

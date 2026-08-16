@@ -1,14 +1,15 @@
 .project {
   position: relative;
   z-index: 1;
-  padding: 72px 8% 84px;
+  padding: 88px var(--page-gutter) 96px;
   overflow: hidden;
   background: linear-gradient(180deg, #ffffff 0%, #f4f5f7 100%);
   color: #111111;
 }
 
 .project-panel {
-  width: min(100%, 1120px);
+  width: 100%;
+  max-width: var(--page-max);
   margin: 0 auto;
   opacity: 0;
   transform: translateY(48px);
@@ -680,7 +681,8 @@
 
 @media (max-width: 640px) {
   .project {
-    padding: 56px 24px 64px;
+    padding-top: 56px;
+    padding-bottom: 64px;
   }
 
   .project-title {

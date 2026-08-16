@@ -20,6 +20,7 @@ const AboutMe = () => {
   const [activeCertificate, setActiveCertificate] = useState<CertificateZoom | null>(null)
   const [activeBuildTitle, setActiveBuildTitle] = useState<string | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [carouselPaused, setCarouselPaused] = useState(false)
   const activeBuild = builds.find((build) => build.title === activeBuildTitle)
   const activeBuildImages = activeBuild?.images ?? []
   const { ref, revealClass } = useReveal<HTMLElement>()
@@ -46,19 +47,33 @@ const AboutMe = () => {
     }
   }, [activeCertificate, activeBuildTitle])
 
+  /**
+   * Auto-advance.
+   *
+   * A self-rescheduling timeout rather than setInterval, with activeImageIndex
+   * in the deps on purpose: every change — including a manual arrow or dot
+   * click — tears the timer down and starts a fresh one. The old interval kept
+   * running through manual navigation, so tapping next a moment before a tick
+   * fired advanced the carousel twice in a row, which is what made it look
+   * broken. Pausing on hover/focus also lets a reader actually finish a caption.
+   */
   useEffect(() => {
-    if (!activeBuildTitle || activeBuildImages.length < 2) {
+    if (!activeBuildTitle || activeBuildImages.length < 2 || carouselPaused) {
       return
     }
 
-    const intervalId = window.setInterval(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
       setActiveImageIndex((currentIndex) => (currentIndex + 1) % activeBuildImages.length)
-    }, 3600)
+    }, 4200)
 
     return () => {
-      window.clearInterval(intervalId)
+      window.clearTimeout(timeoutId)
     }
-  }, [activeBuildImages.length, activeBuildTitle])
+  }, [activeBuildImages.length, activeBuildTitle, activeImageIndex, carouselPaused])
 
   const showPreviousImage = () => {
     if (activeBuildImages.length < 2) {
@@ -80,6 +95,7 @@ const AboutMe = () => {
 
   const openBuild = (title: string) => {
     setActiveImageIndex(0)
+    setCarouselPaused(false)
     setActiveBuildTitle(title)
   }
 
@@ -293,7 +309,14 @@ const AboutMe = () => {
             <X aria-hidden="true" />
           </button>
           <div className="build-modal-blank" onClick={(event) => event.stopPropagation()}>
-            <div className="image-carousel" aria-label={`${activeBuild.title} image carousel`}>
+            <div
+              className="image-carousel"
+              aria-label={`${activeBuild.title} image carousel`}
+              onMouseEnter={() => setCarouselPaused(true)}
+              onMouseLeave={() => setCarouselPaused(false)}
+              onFocusCapture={() => setCarouselPaused(true)}
+              onBlurCapture={() => setCarouselPaused(false)}
+            >
               <button
                 type="button"
                 className="carousel-control prev"
@@ -337,6 +360,12 @@ const AboutMe = () => {
                     <span>Add project screenshots in aboutmeData.ts</span>
                   </div>
                 )}
+
+                {activeBuildImages.length > 1 && (
+                  <span className="carousel-counter" aria-hidden="true">
+                    {activeImageIndex + 1} / {activeBuildImages.length}
+                  </span>
+                )}
               </div>
               <button
                 type="button"
@@ -347,6 +376,25 @@ const AboutMe = () => {
               >
                 <ChevronRight aria-hidden="true" />
               </button>
+
+              {activeBuildImages.length > 1 && (
+                <div className="carousel-dots">
+                  {activeBuildImages.map((image, dotIndex) => (
+                    <button
+                      type="button"
+                      key={`dot-${image.src}-${image.caption}`}
+                      className={`carousel-dot ${dotIndex === activeImageIndex ? 'is-active' : ''}`}
+                      onClick={() => setActiveImageIndex(dotIndex)}
+                      aria-label={`Show image ${dotIndex + 1} of ${activeBuildImages.length}`}
+                      aria-current={dotIndex === activeImageIndex}
+                    >
+                      {/* Fills over one auto-advance interval, so the wait is
+                          visible instead of the jump feeling random. */}
+                      <span className="carousel-dot-fill" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="build-modal-content">

@@ -2,6 +2,22 @@
   box-sizing: border-box;
 }
 
+/* ===== Shared page container =====
+   Every section is full-bleed, pads horizontally by --page-gutter, and caps its
+   inner panel at --page-max. Sections used to combine an 8% gutter with a
+   ~1120px inner cap, which stacked two insets: on a 1920 screen that left the
+   content in a ~1120px strip with ~370px dead on each side. One gutter plus one
+   cap keeps the same reading width on laptops but fills a 1080p display. */
+:root {
+  /* 24px floor matches the phone gutter the sections already used. */
+  --page-gutter: clamp(24px, 3.4vw, 64px);
+  --page-max: 1600px;
+  /* How far a full-bleed element (the logo loop) sits from the viewport edge. */
+  --bleed-inset: min(24px, var(--page-gutter));
+  /* Negative margin that cancels the section gutter down to --bleed-inset. */
+  --bleed-pull: calc(var(--bleed-inset) - var(--page-gutter));
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 92px;
@@ -54,7 +70,12 @@ body {
   flex-direction: column;
   gap: 18px;
   flex: 0 1 620px;
-  max-width: 620px;
+  max-width: 760px;
+}
+
+/* Keeps the measure readable even though the column itself is wider now. */
+.text-content-hero p {
+  max-width: 64ch;
 }
 
 .text-content-hero h1 {
@@ -187,7 +208,7 @@ body {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
-  padding: 126px 8% 64px;
+  padding: 126px var(--page-gutter) 64px;
   display: flex;
   align-items: center;
 }
@@ -240,17 +261,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(40px, 5vw, 72px);
+  gap: clamp(40px, 4vw, 80px);
   width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
 }
 
+/* Both sides grow into the wider container instead of the text capping at
+   620px and leaving a gulf in the middle at 1080p. */
 .text-content-hero {
-  flex: 1 1 560px;
+  flex: 1 1 520px;
 }
 
 /* ===== Hero visuals — two-image showcase (reference layout) ===== */
 .hero-visuals {
-  flex: 0 1 500px;
+  flex: 1 1 480px;
+  max-width: 700px;
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
@@ -303,7 +329,8 @@ body {
 /* --- Laptop / tablet-landscape: keep side-by-side, ease the pressure --- */
 @media (max-width: 1024px) {
   .hero {
-    padding: 116px 6% 56px;
+    padding-top: 116px;
+    padding-bottom: 56px;
   }
 
   .hero-image {
@@ -328,7 +355,8 @@ body {
 @media (max-width: 768px) {
   .hero {
     min-height: auto;
-    padding: 118px 6% 48px;
+    padding-top: 118px;
+    padding-bottom: 48px;
   }
 
   .hero-image {
@@ -379,7 +407,8 @@ body {
 /* --- Small phones: images can get too tight side-by-side --- */
 @media (max-width: 420px) {
   .hero {
-    padding: 104px 5% 40px;
+    padding-top: 104px;
+    padding-bottom: 40px;
   }
 
   .hero-image {

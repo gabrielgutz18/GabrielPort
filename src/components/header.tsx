@@ -27,6 +27,10 @@ function Header() {
       </nav>
 
       <div className="header-actions">
+        <Link className="header-cta" to="/ai-creation" onClick={closeMenu}>
+          AI Creation
+        </Link>
+
         <button
           type="button"
           className="header-menu-btn"

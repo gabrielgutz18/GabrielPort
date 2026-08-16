@@ -1,17 +1,48 @@
 
+/* ===== About =====
+   Light-canvas translation of the AI Creation page's token set, so the two
+   share one component language — same 18px card radius, same pill labels and
+   chips, same lift-and-halo hover — rendered as ink on paper instead of white
+   on black. Values mirror --ai-* in aiCreation.css. */
 .aboutme {
+  --ab-surface: rgba(255, 255, 255, 0.72);
+  --ab-surface-strong: #ffffff;
+  --ab-line: rgba(17, 17, 17, 0.09);
+  --ab-line-strong: rgba(17, 17, 17, 0.24);
+  --ab-muted: #52555b;
+  --ab-faint: #8a909b;
+  --ab-radius: 18px;
+  --ab-radius-sm: 14px;
+  --ab-rest: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --ab-halo: 0 18px 42px rgba(15, 23, 42, 0.12);
+
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 56px 8% 64px;
+  padding: 72px var(--page-gutter) 80px;
   color: #111111;
 }
 
+/* Ambient blooms — the light-mode counterpart of the AI page's glow layer.
+   Sits at -11 so the GridPattern (-z-10) still reads on top of it. */
+.aboutme::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -11;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 40% at 10% 4%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(46% 36% at 92% 72%, rgba(214, 222, 233, 0.5), transparent 72%),
+    radial-gradient(38% 30% at 46% 108%, rgba(226, 232, 240, 0.45), transparent 70%);
+}
+
+/* Rule + text, matching .skill-label. */
 .about-label {
   display: flex;
   align-items: center;
   gap: 9px;
-  max-width: 1180px;
+  max-width: var(--page-max);
   margin: 0 auto 18px;
   color: #000000;
   font-size: 12px;
@@ -24,6 +55,7 @@
 .about-label::before {
   content: "";
   display: block;
+  flex: 0 0 auto;
   width: 26px;
   height: 2px;
   background: #000000;
@@ -31,10 +63,10 @@
 
 .about-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.88fr);
-  gap: clamp(36px, 5vw, 72px);
+  grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.72fr);
+  gap: clamp(36px, 3.4vw, 64px);
   align-items: start;
-  max-width: 1180px;
+  max-width: var(--page-max);
   margin: 0 auto;
 }
 
@@ -46,12 +78,14 @@
 .about-side {
   position: sticky;
   top: 102px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--ab-radius);
+  /* Matches the AI page's surface build: near-black with a top-edge bloom,
+     never pure #000 (which smears on OLED). */
   background:
-    linear-gradient(145deg, rgba(8, 8, 8, 1), rgba(255, 255, 255, 0.01)),
-    rgba(0, 0, 0, 0.9);
+    radial-gradient(90% 55% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 70%),
+    #0a0a0c;
   box-shadow: 0 24px 58px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(18px) saturate(130%);
   -webkit-backdrop-filter: blur(18px) saturate(130%);
@@ -79,16 +113,25 @@
   color: #5f6b7a;
 }
 
+/* Promoted from a bare left rule to a glass pull-quote card — the section's
+   opening statement was the flattest thing on the page. */
 .about-quote {
-  max-width: 660px;
-  margin: 0 0 18px;
-  padding-left: 16px;
-  border-left: 3px solid #000000;
-  color: #4b5563;
+  position: relative;
+  max-width: 680px;
+  margin: 0 0 24px;
+  padding: 22px 26px;
+  border: 1px solid var(--ab-line);
+  border-left: 3px solid #111111;
+  border-radius: var(--ab-radius);
+  background: var(--ab-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--ab-rest);
+  color: #2c2f35;
   font-size: clamp(15px, 1.8vw, 17px);
   font-style: italic;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .about-intro {
@@ -117,9 +160,12 @@
   gap: 7px;
   min-height: 36px;
   padding: 7px 14px;
-  border: 1px solid rgba(17, 17, 17, 0.13);
+  border: 1px solid var(--ab-line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--ab-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--ab-rest);
   color: #374151;
   cursor: default;
   font-size: 13px;
@@ -132,9 +178,10 @@
 }
 
 .badge:hover {
-  border-color: #000000;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
-  transform: translateY(-1px);
+  border-color: var(--ab-line-strong);
+  background: var(--ab-surface-strong);
+  box-shadow: var(--ab-halo);
+  transform: translateY(-2px);
 }
 
 .badge svg {
@@ -190,31 +237,47 @@
   line-height: 1.45;
 }
 
+/* Section eyebrow — small caps + a short rule, matching the AI page's
+   uppercase/0.14em label rhythm. */
 .section-title {
-  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
   color: #586174;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
+}
+
+.section-title::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.14), transparent);
+}
+
+.about-side .section-title::after {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent);
 }
 
 .section-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   min-width: 20px;
-  height: 18px;
-  margin-left: 8px;
-  padding: 0 6px;
+  height: 19px;
+  padding: 0 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0;
-  vertical-align: middle;
 }
 
 .build-list {
@@ -227,25 +290,46 @@
 }
 
 .build-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
+  gap: 12px;
   min-height: auto;
-  padding: 13px;
-  border: 1px solid rgba(17, 17, 17, 0.09);
-  border-radius: 10px;
-  background: #ffffff;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid var(--ab-line);
+  border-radius: var(--ab-radius);
+  background: var(--ab-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--ab-rest);
   transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+/* Sheen that fades in on hover — the light-mode read of the AI page's halo. */
+.build-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(80% 60% at 50% 0%, rgba(255, 255, 255, 0.9), transparent 70%);
+  transition: opacity 250ms ease;
 }
 
 .build-item:hover {
-  border-color: rgba(17, 17, 17, 0.28);
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
-  transform: translateY(-2px);
+  border-color: var(--ab-line-strong);
+  background: var(--ab-surface-strong);
+  box-shadow: var(--ab-halo);
+  transform: translateY(-4px);
+}
+
+.build-item:hover::after {
+  opacity: 1;
 }
 
 .build-item:has(.build-card-button:focus),
@@ -278,10 +362,13 @@
 }
 
 .build-card-button {
+  /* Above .build-item::after so the hover sheen never sits over the text. */
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 9px;
+  gap: 11px;
   flex: 1 1 auto;
   min-width: 0;
   padding: 0;
@@ -301,14 +388,22 @@
   transform: translateY(1px);
 }
 
+/* Bordered rounded tile, same construction as .ai-placeholder-icon. */
 .build-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 13px;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.build-item:hover .build-icon {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.16);
 }
 
 .build-icon svg {
@@ -357,13 +452,27 @@
   line-height: 1.5;
 }
 
+/* Chip, matching .ai-chip — reads as an affordance rather than stray caps. */
 .build-text span.build-hint {
-  margin-top: 8px;
-  color: #9098a8;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 4px 10px;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.035);
+  color: #5b6270;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  transition: border-color 250ms ease, color 250ms ease, background-color 250ms ease;
+}
+
+.build-item:hover .build-text span.build-hint {
+  border-color: rgba(17, 17, 17, 0.24);
+  background: rgba(17, 17, 17, 0.06);
+  color: #111111;
 }
 
 .build-item:has(.build-card-button:focus) .build-text span.build-hint,
@@ -372,6 +481,8 @@
 }
 
 .build-link {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -406,15 +517,25 @@
 }
 
 .cta-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 22px;
-  border: 1px solid rgba(17, 17, 17, 0.14);
-  border-radius: 8px;
-  background: #111111;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+  padding: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--ab-radius);
+  /* Same layered near-black + top bloom as the AI page's dark surfaces. */
+  background:
+    radial-gradient(70% 120% at 50% 0%, rgba(255, 255, 255, 0.09), transparent 70%),
+    #0c0c0e;
+  box-shadow: 0 22px 52px rgba(15, 23, 42, 0.2);
+}
+
+.cta-bar > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cta-bar p {
@@ -477,6 +598,7 @@
   margin: 0;
 }
 
+/* Fades out toward the bottom so the rail reads as a trail, not a hard border. */
 .timeline::before {
   content: "";
   position: absolute;
@@ -484,7 +606,12 @@
   bottom: 8px;
   left: 15px;
   width: 1px;
-  background: rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.28),
+    rgba(255, 255, 255, 0.14) 60%,
+    transparent
+  );
 }
 
 .tl-item {
@@ -522,6 +649,28 @@
   box-shadow:
     0 0 0 5px rgba(0, 0, 0, 0.98),
     0 0 22px rgba(255, 255, 255, 0.34);
+  animation: tlPulse 2.6s ease-in-out infinite;
+}
+
+/* Marks the current role without needing a coloured badge. */
+@keyframes tlPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 5px rgba(0, 0, 0, 0.98),
+      0 0 18px rgba(255, 255, 255, 0.26);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(0, 0, 0, 0.98),
+      0 0 30px rgba(255, 255, 255, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-dot span.active {
+    animation: none;
+  }
 }
 
 .tl-body {
@@ -586,24 +735,37 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--ab-radius-sm);
+  background: rgba(255, 255, 255, 0.045);
   color: inherit;
   cursor: zoom-in;
   text-align: left;
   font: inherit;
   transition:
-    border-color 160ms ease,
-    background-color 160ms ease;
+    border-color 220ms ease,
+    background-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .cert-row:hover,
 .cert-row:focus-visible {
   outline: none;
   border-color: rgba(255, 255, 255, 0.34);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 255, 255, 0.06);
+}
+
+.cert-thumb,
+.cert-row img {
+  transition: transform 220ms ease;
+}
+
+.cert-row:hover .cert-thumb {
+  transform: scale(1.04);
 }
 
 .cert-thumb {
@@ -760,6 +922,11 @@
 }
 
 .build-modal {
+  /* Redeclared here because the modal is portalled to <body>, outside the
+     .aboutme subtree the --ab-* tokens are scoped to. */
+  --ab-radius: 18px;
+  --ab-radius-sm: 14px;
+
   position: fixed;
   z-index: 1000;
   inset: 0;
@@ -773,25 +940,28 @@
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* Wider panel and a bigger share of it given to the carousel — the stage was
+   the smaller half before, which is backwards for an image-led dialog. */
 .build-modal-blank {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-  gap: clamp(22px, 4vw, 42px);
+  grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.8fr);
+  gap: clamp(22px, 3vw, 44px);
   align-items: center;
-  width: min(100%, 1080px);
-  min-height: min(72vh, 620px);
-  padding: clamp(18px, 3vw, 34px);
-  border: 1px solid rgba(17, 17, 17, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.92);
+  width: min(100%, 1340px);
+  min-height: min(74vh, 660px);
+  padding: clamp(20px, 2.4vw, 34px);
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: var(--ab-radius, 18px);
+  background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 28px 80px rgba(15, 23, 42, 0.2);
 }
 
 .image-carousel {
   position: relative;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 42px;
-  gap: 12px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 14px;
   align-items: center;
   min-width: 0;
 }
@@ -799,15 +969,15 @@
 .images {
   position: relative;
   min-width: 0;
-  min-height: 330px;
+  min-height: clamp(360px, 48vh, 560px);
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--ab-radius, 18px);
 }
 
 .carousel-track {
   position: relative;
   width: 100%;
-  min-height: 330px;
+  min-height: clamp(360px, 48vh, 560px);
 }
 
 .carousel-slide {
@@ -818,27 +988,34 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: clamp(190px, 29vw, 300px);
+  width: clamp(260px, 33vw, 440px);
   margin: 0;
   padding: 0;
-  border-radius: 8px;
+  border-radius: var(--ab-radius, 18px);
   background: #ffffff;
   box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
-  opacity: 0.68;
+  opacity: 0.62;
   filter: grayscale(1);
   pointer-events: none;
+  visibility: visible;
+  /* No `visibility` here on purpose. The old rule transitioned it on every
+     state with a flat 650ms delay, which also delayed hidden -> visible: an
+     incoming slide animated its transform while still invisible, then popped
+     in at the end. Only the hidden state delays it now (see below), so slides
+     appear immediately and only their exit is deferred. Opacity/filter were
+     240ms against a 650ms transform, so the colour snapped in well before the
+     movement settled — matched to 400ms. */
   transition:
-    box-shadow 650ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 240ms ease,
-    opacity 240ms ease,
-    transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0ms linear 650ms;
+    box-shadow 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease,
+    opacity 400ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
 .carousel-slide-before {
   z-index: 1;
-  transform: translate(-112%, -50%) scale(0.78);
+  transform: translate(-104%, -50%) scale(0.8);
 }
 
 .carousel-slide-center {
@@ -852,14 +1029,21 @@
 
 .carousel-slide-after {
   z-index: 1;
-  transform: translate(12%, -50%) scale(0.78);
+  transform: translate(4%, -50%) scale(0.8);
 }
 
+/* Delays only the hide, so the outgoing slide can finish fading. */
 .carousel-slide-hidden {
   z-index: 0;
   visibility: hidden;
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.66);
+  transform: translate(-50%, -50%) scale(0.7);
+  transition:
+    box-shadow 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease,
+    opacity 400ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 620ms;
 }
 
 .carousel-slide img {
@@ -867,27 +1051,136 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   height: auto;
-  border-radius: 8px 8px 0 0;
+  border-radius: 17px 17px 0 0;
   object-fit: cover;
   background: #f6f6f6;
 }
 
 .carousel-slide figcaption {
-  min-height: 44px;
-  padding: 11px 12px;
+  min-height: 46px;
+  padding: 13px 14px;
   color: #111111;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 800;
   line-height: 1.35;
   text-align: center;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide,
+  .carousel-slide-hidden {
+    transition: opacity 200ms ease;
+  }
+}
+
+/* Frame counter — same chip shape as .ai-chip--duration on the AI page. */
+.carousel-counter {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Dot navigation --- */
+.carousel-dots {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.carousel-dot {
+  position: relative;
+  width: 30px;
+  height: 4px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.14);
+  cursor: pointer;
+  transition: width 320ms ease, background-color 200ms ease;
+}
+
+/* 44px touch target without inflating the visible bar. */
+.carousel-dot::after {
+  content: "";
+  position: absolute;
+  inset: -20px -6px;
+}
+
+.carousel-dot:hover {
+  background: rgba(17, 17, 17, 0.3);
+}
+
+.carousel-dot:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 4px;
+}
+
+.carousel-dot.is-active {
+  width: 46px;
+  background: rgba(17, 17, 17, 0.16);
+}
+
+.carousel-dot-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: #111111;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Runs for one auto-advance interval so the wait is legible. */
+.carousel-dot.is-active .carousel-dot-fill {
+  animation: carouselDotFill 4200ms linear forwards;
+}
+
+.image-carousel:hover .carousel-dot.is-active .carousel-dot-fill,
+.image-carousel:focus-within .carousel-dot.is-active .carousel-dot-fill {
+  animation-play-state: paused;
+}
+
+@keyframes carouselDotFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Auto-advance is off under reduced motion, so show a static filled bar. */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-dot.is-active .carousel-dot-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
 .carousel-control {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: 1px solid rgba(17, 17, 17, 0.14);
   border-radius: 999px;
   background: #ffffff;
@@ -916,6 +1209,13 @@
 
 .carousel-control:active:not(:disabled) {
   transform: translateY(1px);
+}
+
+/* Keeps a 44px hit target even where the button is drawn smaller. */
+.carousel-control::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
 }
 
 .carousel-control svg {
@@ -956,12 +1256,19 @@
   min-width: 0;
 }
 
+/* Same pill as .ai-label on the AI Creation page. */
 .build-modal-label {
-  margin: 0 0 10px;
-  color: #586174;
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 6px 13px;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #111111;
+  font-size: 11.5px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -1006,9 +1313,10 @@
 }
 
 .build-modal-notes div {
-  padding: 16px;
+  padding: 16px 18px;
   border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: 8px;
+  border-left: 3px solid rgba(17, 17, 17, 0.72);
+  border-radius: var(--ab-radius-sm, 14px);
   background: rgba(255, 255, 255, 0.72);
 }
 
@@ -1079,22 +1387,25 @@
 .fact-card {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   min-height: auto;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--ab-radius-sm);
+  background: rgba(255, 255, 255, 0.045);
   text-align: left;
   transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
+    background-color 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .fact-card:hover {
-  border-color: rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.085);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .fact-emoji {
@@ -1126,7 +1437,8 @@
 @media (max-width: 768px) {
   .aboutme {
     width: 100%;
-    padding: 58px 6% 70px;
+    padding-top: 58px;
+    padding-bottom: 70px;
   }
 
   .about-layout {
@@ -1168,23 +1480,23 @@
   }
 
   .images {
-    min-height: 280px;
+    min-height: 350px;
   }
 
   .carousel-track {
-    min-height: 280px;
+    min-height: 350px;
   }
 
   .carousel-slide {
-    width: clamp(170px, 44vw, 260px);
+    width: clamp(220px, 54vw, 370px);
   }
 
   .carousel-slide-before {
-    transform: translate(-106%, -50%) scale(0.76);
+    transform: translate(-102%, -50%) scale(0.78);
   }
 
   .carousel-slide-after {
-    transform: translate(6%, -50%) scale(0.76);
+    transform: translate(2%, -50%) scale(0.78);
   }
 
   .cta-bar {
@@ -1195,7 +1507,8 @@
 
 @media (max-width: 520px) {
   .aboutme {
-    padding: 50px 24px 62px;
+    padding-top: 50px;
+    padding-bottom: 62px;
   }
 
   .about-title {
@@ -1235,26 +1548,44 @@
     padding: 16px;
   }
 
+  /* Controls float over the stage instead of taking two side columns — that
+     gave back ~85px of a ~325px row, so the image itself is far larger. */
   .image-carousel {
-    grid-template-columns: 34px minmax(0, 1fr) 34px;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
   }
 
   .images {
-    min-height: 250px;
+    grid-column: 1;
+    min-height: 310px;
   }
 
   .carousel-track {
-    min-height: 250px;
+    min-height: 310px;
   }
 
   .carousel-control {
-    width: 34px;
-    height: 34px;
+    position: absolute;
+    top: calc(50% - 26px);
+    z-index: 4;
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
+  .carousel-control.prev {
+    left: 6px;
+  }
+
+  .carousel-control.next {
+    right: 6px;
+  }
+
+  /* Neighbours are hidden at this width, so the centre slide takes the room. */
   .carousel-slide {
-    width: min(100%, 240px);
+    width: min(100%, 330px);
   }
 
   .carousel-slide-before,

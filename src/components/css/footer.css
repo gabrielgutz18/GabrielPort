@@ -1,5 +1,5 @@
 .site-footer {
-  padding: 56px 8% 24px;
+  padding: 64px var(--page-gutter) 24px;
   background: #1b1b1b;
   margin-top: auto;
   color: #e2e8f0;
@@ -8,9 +8,9 @@
 .footer-content {
   display: grid;
   grid-template-columns: 1.6fr 1fr 1.4fr;
-  gap: 48px;
+  gap: clamp(32px, 4vw, 72px);
   align-items: start;
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: 0 auto;
 }
 
@@ -281,7 +281,8 @@
 
 @media (max-width: 560px) {
   .site-footer {
-    padding: 40px 24px 24px;
+    padding-top: 40px;
+    padding-bottom: 24px;
   }
 
   .footer-content {

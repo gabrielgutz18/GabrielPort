@@ -129,7 +129,11 @@ const Contact2 = (props: Props) => {
       }
       form.reset();
       setStatus("sent");
-    } catch {
+    } catch (error) {
+      // The visitor sees a generic message, but the real cause — a missing
+      // server secret, an EmailJS rejection, a bad origin — has to surface
+      // somewhere or the form fails with no way to tell why.
+      console.error("Contact form send failed:", error);
       setStatus("error");
       form.setError("root", {
         message: "Something went wrong. Please try again.",

@@ -107,6 +107,27 @@ function requiredSecret(name: string): string {
   return value;
 }
 
+const REQUIRED_SECRETS = [
+  "EMAILJS_PUBLIC_KEY",
+  "EMAILJS_PRIVATE_KEY",
+  "EMAILJS_SERVICE_ID",
+  "EMAILJS_TEMPLATE_ID",
+];
+
+function missingSecrets(): string[] {
+  return REQUIRED_SECRETS.filter((name) => !Deno.env.get(name));
+}
+
+// EmailJS rejections are configuration problems almost every time — a disabled
+// non-browser toggle, a stale private key, a renamed template. Carrying the
+// upstream status and text on the error means the relay can pass it on instead
+// of collapsing every cause into one opaque "could not send".
+class EmailJSError extends Error {
+  constructor(readonly status: number, readonly detail: string) {
+    super(`EmailJS ${status}: ${detail}`);
+  }
+}
+
 async function sendViaEmailJS(
   serviceId: string,
   templateId: string,
@@ -126,7 +147,7 @@ async function sendViaEmailJS(
 
   if (!response.ok) {
     // EmailJS returns plain text on failure, not JSON.
-    throw new Error(`EmailJS ${response.status}: ${await response.text()}`);
+    throw new EmailJSError(response.status, await response.text());
   }
 }
 
@@ -153,6 +174,16 @@ Deno.serve(async (request) => {
     return json({ error: result.error }, 400, origin);
   }
 
+  // A missing secret is a deploy-time mistake, not a transient send failure.
+  // Reporting both as "could not send" hides the difference, so a form that was
+  // never configured looks identical to EmailJS being down. Check up front and
+  // name the missing secrets in the logs.
+  const missing = missingSecrets();
+  if (missing.length) {
+    console.error(`Not configured — missing secrets: ${missing.join(", ")}`);
+    return json({ error: "Contact form is not configured." }, 500, origin);
+  }
+
   // The notification is the one that matters — if it fails, the visitor is told
   // the send failed so they can retry.
   try {
@@ -163,7 +194,17 @@ Deno.serve(async (request) => {
     );
   } catch (error) {
     console.error("Notification failed:", error);
-    return json({ error: "Could not send your message." }, 502, origin);
+
+    // EmailJS's rejection text names the actual misconfiguration and never
+    // echoes the credentials themselves, so it is safe to hand back. The
+    // browser keeps showing its own generic wording; this rides along in
+    // `detail` purely so the cause is visible from the console.
+    const detail =
+      error instanceof EmailJSError
+        ? `EmailJS ${error.status}: ${error.detail}`
+        : undefined;
+
+    return json({ error: "Could not send your message.", detail }, 502, origin);
   }
 
   // The auto-reply is a courtesy; a failure here must not tell the visitor

@@ -91,7 +91,14 @@ Email is a two-part system, so it has a second failure point beyond the Vercel v
      EMAILJS_AUTOREPLY_SERVICE_ID=... EMAILJS_AUTOREPLY_TEMPLATE_ID=...
    ```
    The EmailJS **private** key lives here, never in the browser bundle (never give it a `VITE_` prefix).
-3. The function's CORS allowlist already permits any `*.vercel.app` domain. **If a custom domain is added later**, register it:
+3. **EmailJS blocks server-side callers by default.** The Edge Function runs on
+   Deno, not in a browser, so EmailJS rejects it with
+   `403 API access from non-browser environments is currently disabled` until
+   the toggle is turned on under
+   [Account > Security](https://dashboard.emailjs.com/admin/account/security).
+   This is invisible from the code — the secrets can all be set correctly and
+   the send will still fail. Enabling it is what makes the private key usable.
+4. The function's CORS allowlist already permits any `*.vercel.app` domain. **If a custom domain is added later**, register it:
    ```bash
    supabase secrets set ALLOWED_ORIGINS=https://yourdomain.com
    ```

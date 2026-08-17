@@ -323,6 +323,12 @@
   background: #000000;
 }
 
+/* Vertical clips letterbox inside the shared 16:9 frame — cropping a 9:16 shot
+   to landscape would cut the subject in half. */
+.ai-media--portrait .ai-video {
+  object-fit: contain;
+}
+
 .ai-placeholder {
   position: relative;
   display: grid;
@@ -397,6 +403,190 @@
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+/* ===== Latest clip =====
+   The newest piece, pulled out of the grid: full-width player as a banner,
+   with the write-up and the craft notes sharing the row underneath. */
+.ai-latest-card {
+  overflow: hidden;
+  border: 1px solid var(--ai-line);
+  border-radius: 20px;
+  background: var(--ai-surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Player + poster cluster, centred rather than stretched: the video is sized
+   off its own height so it stays a clip, not a hero banner. */
+/* The two widths below are what keep the row honest: a 16:9 player at 67.7% and
+   a 4:5 poster at 30.5% work out to the same height at any card width, so the
+   pair always fills the row edge to edge and stays flush at the bottom. */
+.ai-latest-showcase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px 1.8%;
+  margin: 0;
+  padding: clamp(18px, 2vw, 26px);
+}
+
+/* Full 16:9 frame — the clip is a ~2.3:1 picture letterboxed into 1080p, and
+   the bars are part of how it was shot, so they stay. */
+.ai-latest-media {
+  flex: 0 0 67.7%;
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--ai-line);
+  border-radius: 14px;
+}
+
+.ai-latest-media .ai-video {
+  object-fit: contain;
+}
+
+/* Wraps onto its own line under the row, which lands it directly beneath the
+   video rather than beside the poster. */
+.ai-latest-credit {
+  flex: 0 0 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ai-faint);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 16px;
+  text-transform: uppercase;
+}
+
+.ai-latest-credit-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--ai-accent);
+}
+
+/* Poster sheet — 4:5. Stretching to the row rather than declaring the ratio:
+   a stretched flex item resolves its width first, so `aspect-ratio` would
+   collapse the box. The 30.5% basis is what makes the height come out right. */
+.ai-latest-poster {
+  flex: 0 0 30.5%;
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--ai-line);
+  border-radius: 14px;
+  background: #000000;
+}
+
+/* `contain`, not `cover`: the title sits close to the top edge of the sheet, so
+   a couple of stray pixels of crop would clip it. */
+.ai-latest-poster-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ai-latest-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(240px, 1fr);
+  gap: clamp(18px, 2.4vw, 40px);
+  padding: clamp(20px, 2vw, 30px);
+  border-top: 1px solid var(--ai-line);
+}
+
+.ai-latest-lede {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.ai-latest-dateline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ai-faint);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Slow pulse — the only thing on the page that says "this one is new". */
+.ai-latest-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  animation: aiLatestPulse 2.4s ease-out infinite;
+}
+
+@keyframes aiLatestPulse {
+  from {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+  }
+  to {
+    box-shadow: 0 0 0 9px rgba(255, 255, 255, 0);
+  }
+}
+
+.ai-latest-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-latest-heading h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.ai-latest-summary {
+  margin: 0;
+  color: var(--ai-muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+/* Craft notes column — the rule replaces a card border, so it only exists
+   while the two columns actually sit side by side. */
+.ai-latest-beats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding-left: clamp(18px, 2.4vw, 40px);
+  border-left: 1px solid var(--ai-line);
+}
+
+.ai-latest-beat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ai-latest-beat dt {
+  margin: 0;
+  color: var(--ai-text);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.ai-latest-beat dd {
+  margin: 0;
+  color: var(--ai-muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
 /* ===== Video showcase ===== */
@@ -570,6 +760,154 @@
   opacity: 1;
 }
 
+/* ===== In-tile carousel =====
+   Frames from one set sit stacked in the tile and cross-fade. Controls float
+   over the image and stay out of the way until the tile is hovered or focused. */
+.ai-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* The stage is the click target that steps forward — a bare button so the whole
+   image is keyboard-reachable without wrapping the arrows inside it. */
+.ai-carousel-stage {
+  display: block;
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.ai-carousel-stage:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: -3px;
+}
+
+.ai-carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.ai-carousel-slide[data-active='true'] {
+  opacity: 1;
+}
+
+.ai-carousel-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 1px solid var(--ai-line-strong);
+  border-radius: 50%;
+  background: rgba(6, 6, 7, 0.62);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ai-text);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.ai-carousel-nav svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ai-carousel-nav--prev {
+  left: 10px;
+}
+
+.ai-carousel-nav--next {
+  right: 10px;
+}
+
+.ai-tile:hover .ai-carousel-nav,
+.ai-tile:focus-within .ai-carousel-nav {
+  opacity: 1;
+}
+
+.ai-carousel-nav:hover {
+  background: rgba(6, 6, 7, 0.88);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.ai-carousel-nav:focus-visible {
+  opacity: 1;
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
+/* Frame counter doubles as the "there's more in here" hint, so it stays visible. */
+.ai-carousel-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1px solid var(--ai-line);
+  border-radius: 999px;
+  background: rgba(6, 6, 7, 0.66);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ai-text);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.ai-carousel-count svg {
+  width: 12px;
+  height: 12px;
+  color: var(--ai-accent);
+}
+
+.ai-carousel-dots {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+
+.ai-carousel-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.ai-carousel-dot[data-active='true'] {
+  background: #ffffff;
+  transform: scale(1.25);
+}
+
+.ai-carousel-dot:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
 /* ===== How I prompt ===== */
 .ai-prompt-grid {
   display: grid;
@@ -727,6 +1065,19 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* Notes drop under the write-up once their column gets too narrow to hold
+     a label and a sentence without ragging badly. */
+  .ai-latest-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ai-latest-beats {
+    padding-left: 0;
+    padding-top: 18px;
+    border-left: 0;
+    border-top: 1px solid var(--ai-line);
+  }
+
   /* 2 columns: tall/square take one each, wide takes the full row. */
   .ai-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -760,11 +1111,41 @@
     grid-column: span 1;
   }
 
-  /* No hover on touch — show the prompt outright. */
+  /* No hover on touch — show the prompt and the carousel arrows outright. */
   .ai-tile-prompt {
     max-height: 140px;
     margin-top: 9px;
     opacity: 1;
+  }
+
+  .ai-carousel-nav {
+    opacity: 1;
+  }
+
+  /* Poster drops under the player once they can't share a row without both
+     going postage-stamp sized. Bases are reset because they'd size the main
+     axis — which is now vertical. */
+  .ai-latest-showcase {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ai-latest-media {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .ai-latest-poster {
+    flex: 0 0 auto;
+    align-self: center;
+    width: clamp(180px, 56vw, 250px);
+    aspect-ratio: 4 / 5;
+  }
+
+  .ai-latest-credit {
+    flex: 0 0 auto;
+    align-self: flex-start;
   }
 
   .ai-btn {
@@ -775,7 +1156,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ai-glow,
-  .ai-placeholder-shimmer {
+  .ai-placeholder-shimmer,
+  .ai-latest-dot {
     animation: none;
   }
 
@@ -787,6 +1169,14 @@
   }
 
   .ai-tile:hover .ai-tile-img {
+    transform: none;
+  }
+
+  .ai-carousel-slide {
+    transition: none;
+  }
+
+  .ai-carousel-dot[data-active='true'] {
     transform: none;
   }
 }

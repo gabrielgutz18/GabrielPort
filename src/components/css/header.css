@@ -122,6 +122,22 @@
   transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
+/* Tablet/small laptop: seven inline links plus the CTA overflow at the desktop
+   spacing, so tighten the gaps before the mobile breakpoint takes over. */
+@media (max-width: 1180px) {
+  .site-header {
+    gap: 22px;
+  }
+
+  .site-nav {
+    gap: 18px;
+  }
+
+  .site-nav a {
+    font-size: 14px;
+  }
+}
+
 /* ===== Mobile: collapse nav behind the hamburger ===== */
 @media (max-width: 640px) {
   .site-header {
@@ -177,8 +193,9 @@
     border-bottom: 1px solid rgba(17, 17, 17, 0.08);
   }
 
+  /* Roomy enough for every nav row — raise this if more links are added. */
   .site-header.nav-open .site-nav {
-    max-height: 320px;
+    max-height: 460px;
     opacity: 1;
     margin-top: 14px;
   }

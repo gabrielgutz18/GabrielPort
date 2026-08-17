@@ -1,11 +1,26 @@
-/**
- * Content for the AI Creation showcase page.
- *
- * The real renders aren't produced yet, so every `video` / `image` field is
- * `null` on purpose — the page renders a styled placeholder for those instead
- * of a broken <video>/<img>. To publish a piece, drop the file in
- * src/images (or src/assets), import it here, and swap the null for the import.
- */
+import carabaoImage from '../../images/gen/carabao.png'
+import charcterImage from '../../images/gen/charcter.png'
+import chromeImage from '../../images/gen/chrome.png'
+import chrome2Image from '../../images/gen/chrome2.png'
+import engrImage from '../../images/gen/engr.png'
+import graduateImage from '../../images/gen/graduate.png'
+import rbcrocImage from '../../images/gen/rbcroc.png'
+import sharkImage from '../../images/gen/shark.png'
+import standImage from '../../images/gen/stand.png'
+import stand2Image from '../../images/gen/stand2.png'
+import stand3Image from '../../images/gen/stand3.png'
+import trexImage from '../../images/gen/trex.png'
+
+import agentBlackKeyArt from '../../images/gen/AgentBposter.png'
+
+import agentBlackVideo from '../../images/gen/AgentBlack.mp4'
+import officerVideo from '../../images/gen/gemini_generated_video_526dc978.mp4'
+import droneCatVideo from '../../images/gen/gemini_generated_video_5c35bdb7.mp4'
+import chromeRunnerVideo from '../../images/gen/gemini_generated_video_c7501924.mp4'
+import agentBlackPoster from '../../images/gen/poster-agentblack.jpg'
+import officerPoster from '../../images/gen/poster-526dc978.jpg'
+import droneCatPoster from '../../images/gen/poster-5c35bdb7.jpg'
+import chromeRunnerPoster from '../../images/gen/poster-c7501924.jpg'
 
 export type AiVideo = {
   title: string
@@ -13,16 +28,41 @@ export type AiVideo = {
   video: string | null
   /** Still frame shown before playback; null falls back to the placeholder art. */
   poster: string | null
+  /** Portrait clips letterbox inside the 16:9 frame instead of cropping. */
+  orientation?: 'landscape' | 'portrait'
   model: string
   duration: string
   summary: string
   prompt: string
 }
 
+/**
+ * The one clip that gets top billing above the grid. Same media fields as
+ * `AiVideo` plus the extras a spotlight can afford — a release note and the
+ * shot-by-shot beats that fit next to a full-width player.
+ */
+export type AiFeaturedClip = AiVideo & {
+  /** Small dateline above the title, e.g. 'August 2026'. */
+  released: string
+  /** The film's poster sheet, shown beside the player. Carries its own title
+   *  and credits, so nothing gets overlaid on it. */
+  keyArt: string
+  keyArtAlt: string
+  /** Tool credited under the player. */
+  generator: string
+  /** Short craft notes listed beside the player. */
+  beats: { label: string; detail: string }[]
+}
+
 export type AiImage = {
   title: string
   /** null until the render is ready — renders a placeholder tile. */
   image: string | null
+  /**
+   * Every frame of a related set, cover first. Two or more turns the tile into
+   * a carousel; leave it out for a one-off image.
+   */
+  slides?: string[]
   alt: string
   model: string
   /** Drives the tile's span in the masonry grid. */
@@ -40,96 +80,161 @@ export type PromptTechnique = {
   strong: string
 }
 
+/** Newest piece — rendered on its own above the showcase grid. */
+export const latestClip: AiFeaturedClip = {
+  title: 'Agent Black',
+  video: agentBlackVideo,
+  poster: agentBlackPoster,
+  model: 'Text-to-video',
+  duration: '1:17',
+  released: 'August 2026',
+  keyArt: agentBlackKeyArt,
+  keyArtAlt:
+    'Agent Black poster: a man in a black suit and red tie looking up through the rain under an umbrella, a red sniper dot on his cheek, credited to Ken Rhendel and 8 Months Studio',
+  generator: 'Gemini Flash 3.7',
+  summary:
+    'A noir short cut from generated shots: an operative works a rain-soaked city at night, and a sniper dot finds him mid-cigar. The point of the exercise was continuity — the same face, the same black suit and red tie, holding across every angle and location in the edit.',
+  prompt:
+    'Cinematic 2.3:1 short film, a stone-faced operative in a black suit and deep red tie moving through a rain-soaked neon city at night, umbrella in hand, wet asphalt reflections and traffic bokeh, a red sniper laser tracking across his face, moody teal and crimson grade, shallow depth of field, anamorphic flare, 24fps.',
+  beats: [
+    {
+      label: 'Continuity',
+      detail:
+        'One locked character description reused verbatim in every shot prompt, so the suit, the tie and the face survive the cuts.',
+    },
+    {
+      label: 'Lighting',
+      detail:
+        'Night rain and practicals only — street signs, headlights and one red laser doing all the key work.',
+    },
+    {
+      label: 'Edit',
+      detail:
+        'Generated shots cut to a single rhythm: wide to establish, close for the beat, then out on the laser.',
+    },
+  ],
+}
+
 export const aiVideos: AiVideo[] = [
   {
-    title: 'Neon City Flythrough',
-    video: null,
-    poster: null,
+    title: 'Arctic Portrait',
+    video: officerVideo,
+    poster: officerPoster,
     model: 'Text-to-video',
-    duration: '0:12',
-    summary:
-      'A slow camera push down a rain-soaked street, shot to feel like a handheld night take rather than a rendered scene.',
-    prompt:
-      'Cinematic drone shot flying low through a rain-soaked neon street at night, reflections on wet asphalt, shallow depth of field, 24fps motion blur, teal and magenta lighting.',
-  },
-  {
-    title: 'Product Reveal Loop',
-    video: null,
-    poster: null,
-    model: 'Image-to-video',
     duration: '0:08',
     summary:
-      'A seamless loop built from a single still, animated with a controlled orbit so the product stays the focus.',
+      'A locked-off portrait against a glacier — the whole shot rests on the subject holding still while the weather moves behind him.',
     prompt:
-      'Slow 30-degree orbit around a matte black device on a seamless studio backdrop, soft key light from the upper left, subtle rim light, no camera shake, loops seamlessly.',
+      'Cinematic locked-off medium shot of a young officer in a black high-collar uniform standing on an arctic plain, snow-covered mountains behind him, flat overcast light, shallow depth of field, subtle wind in the hair, 24fps.',
   },
   {
-    title: 'Abstract Motion Study',
-    video: null,
-    poster: null,
+    title: 'Drone Build, Interrupted',
+    video: droneCatVideo,
+    poster: droneCatPoster,
     model: 'Text-to-video',
-    duration: '0:15',
+    duration: '0:08',
     summary:
-      'A texture piece for backgrounds — liquid light moving slowly enough to sit behind type without fighting it.',
+      'A small comedic beat — the cat is the story, so the camera stays wide enough to hold both performances in one frame.',
     prompt:
-      'Macro shot of iridescent liquid ink blooming in clear water, ultra slow motion, dark background, volumetric light from behind, high contrast, minimal color palette.',
+      'Handheld medium shot of a man assembling an FPV drone on a wooden table while a large ginger cat steps onto the circuit board, warm daylight from a window, natural home interior, reactive facial expression, 24fps.',
+  },
+  {
+    title: 'Chrome Runner',
+    video: chromeRunnerVideo,
+    poster: chromeRunnerPoster,
+    orientation: 'portrait',
+    model: 'Text-to-video',
+    duration: '0:08',
+    summary:
+      'Shot vertical for social — a liquid-metal figure running straight at the lens so the reflections keep changing as it approaches.',
+    prompt:
+      'Vertical tracking shot of a polished liquid-chrome humanoid runner in a blue athletic kit sprinting toward camera on a rocky path, ancient Greek temple ruins on the hill behind, golden hour backlight, mirror-like reflections, 24fps.',
   },
 ]
 
 export const aiImages: AiImage[] = [
   {
-    title: 'Character Creation',
-    image: null,
-    alt: 'AI-generated character portrait study with different angles and expressions',
+    title: 'Dreadful Lybrinth',
+    image: standImage,
+    slides: [standImage, stand2Image, stand3Image],
+    alt: 'Three-part character study of an armoured white and crimson figure: portrait, turnaround sheet and manga-style stat page',
     model: 'Text-to-image',
     ratio: 'tall',
     prompt:
-      'Editorial portrait, 85mm lens, soft window light from camera left, muted earth-tone wardrobe, film grain, shallow depth of field.',
+      'Armoured humanoid in white lacquer plating with crimson inlay and a crown-like helm, full turnaround sheet plus a manga stat page, neutral studio backdrop, consistent lighting across every view.',
   },
   {
-    title: 'Architecture Concept',
-    image: null,
-    alt: 'AI-generated architecture concept render',
+    title: 'Consulting Mascot Sheet',
+    image: charcterImage,
+    alt: 'Character sheet for a 3D consulting mascot: a badge-shaped body in a hard hat, shown from four angles with expressions and palette',
     model: 'Text-to-image',
     ratio: 'wide',
     prompt:
-      'Brutalist concrete pavilion at golden hour, long shadows, wide-angle architectural photography, clear sky, human figure for scale.',
+      'Character design sheet for a 3D mascot built from a circular company badge, orange hard hat, white gloves and red shoes, front / three-quarter / profile views, expression grid, wardrobe callouts and hex palette, clean white background.',
   },
   {
-    title: 'Product Mockup',
-    image: null,
-    alt: 'AI-generated product mockup',
+    title: 'Cost Engineering Class',
+    image: engrImage,
+    alt: 'Flat illustration of an engineer presenting a cost breakdown at a whiteboard to a seated class',
+    model: 'Text-to-image',
+    ratio: 'wide',
+    prompt:
+      'Flat vector illustration of an engineer in a hard hat presenting a cost breakdown on a whiteboard to a seated class, bright classroom with a city view, clean line work, corporate colour palette.',
+  },
+  {
+    title: 'Liquid Chrome',
+    image: chromeImage,
+    slides: [chromeImage, chrome2Image],
+    alt: 'Two editorial fashion frames of the same model in silver metallic clothing, one in a water splash and one under neon strip lights',
     model: 'Text-to-image',
     ratio: 'square',
     prompt:
-      'Minimal product photography of a ceramic bottle on a stone plinth, single softbox, deep shadows, negative space on the right for copy.',
+      'High-fashion editorial portrait, silver metallic wardrobe, frozen water splash around the subject, cool steel palette, hard studio key light, sharp beading detail on skin and fabric.',
   },
   {
-    title: 'Landscape Frame',
-    image: null,
-    alt: 'AI-generated landscape frame',
+    title: 'Chrome Predators',
+    image: sharkImage,
+    alt: 'Chrome-armoured figure in a visor surrounded by metallic sharks and bursting water',
+    model: 'Text-to-image',
+    ratio: 'square',
+    prompt:
+      'Chrome-armoured figure wearing a mirrored visor, surrounded by polished metal sharks and exploding water, overcast sci-fi skyline behind, monochrome silver palette, high contrast.',
+  },
+  {
+    title: 'Rice Field, Golden Hour',
+    image: carabaoImage,
+    alt: 'Farmer working a flooded rice paddy behind a carabao, mountains in the distance',
     model: 'Text-to-image',
     ratio: 'wide',
     prompt:
-      'Aerial view of a volcanic coastline at dawn, low mist over black sand, muted blue-grey palette, natural light, no people.',
+      'Documentary photograph of a Filipino farmer ploughing a flooded rice paddy behind a carabao, palm trees and mountains on the horizon, midday light, natural colour, 35mm.',
   },
   {
-    title: 'Character Design',
-    image: null,
-    alt: 'AI-generated character design sheet',
+    title: 'Graduation Dunk',
+    image: graduateImage,
+    alt: 'Comic-style illustration of a graduate in cap and gown dunking a basketball past Spider-Man',
     model: 'Text-to-image',
     ratio: 'tall',
     prompt:
-      'Character design sheet, front and side view, stylised realism, neutral grey background, consistent lighting, clean line work.',
+      'Comic book illustration of a graduate in cap and gown dunking a basketball over a costumed hero, packed arena, confetti and stadium lights, bold ink lines, dynamic low angle.',
   },
   {
-    title: 'Poster Composition',
-    image: null,
-    alt: 'AI-generated poster composition',
+    title: 'Citrus Contender',
+    image: rbcrocImage,
+    alt: 'Crocodile with a lemon for a body, wearing a racing cap and holding a team flag in a marsh',
     model: 'Text-to-image',
     ratio: 'square',
     prompt:
-      'Swiss-style poster layout, bold geometric shapes, two-colour palette, generous margins, flat print texture.',
+      'Photoreal crocodile whose body is a whole lemon sitting in shallow marsh water, wearing a racing team cap and holding a small team flag, dry reeds behind, soft overcast light, macro detail on the peel.',
+  },
+  {
+    title: 'Prehistoric Patient',
+    image: trexImage,
+    alt: 'Chiropractor adjusting a life-sized T-rex lying on a treatment table in a clinic',
+    model: 'Text-to-image',
+    ratio: 'tall',
+    prompt:
+      'Photoreal shot of a chiropractor adjusting a life-sized tyrannosaurus lying on a treatment table in an ordinary clinic room, fluorescent light, anatomy poster on the wall, played completely straight.',
   },
 ]
 

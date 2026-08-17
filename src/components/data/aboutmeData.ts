@@ -26,7 +26,7 @@ import hobby3 from '../../assets/svgs/d-pad-svgrepo-com.svg'
 import hobby4 from '../../assets/svgs/music-svgrepo-com (1).svg'
 import hobby5 from '../../assets/svgs/paint-svgrepo-com.svg'
 import hobby6 from '../../assets/svgs/running-svgrepo-com.svg'
-import gvgImage from '../../images/gvg.png'
+
 import nqstvImage from '../../images/nqstv.png'
 import droneImage from '../../images/drone.png'
 import drone3dImage from '../../images/drone3d.png'
@@ -45,6 +45,12 @@ import actualNas from '../../images/actualnas.png'
 import truenas from '../../images/truenas.png'
 import nic from '../../images/nic.png'
 import storage from '../../images/storage.png'
+import headerNqstv from '../../images/nqstv/header.png'
+import welcome from '../../images/nqstv/welcome.png'
+import projects from '../../images/nqstv/featured.png'
+import listprojects from '../../images/nqstv/projects.png'
+
+import map from '../../images/nqstv/map.png'
 
 export type AboutSkill = {
   label: string
@@ -114,10 +120,30 @@ export const builds: Build[] = [
         caption: 'Live website homepage preview',
       },
       {
-        src: gvgImage,
+        src: headerNqstv,
         alt: 'Related website project preview',
-        caption: 'Responsive website layout reference',
+        caption: 'Website Hero-banner preview',
       },
+      {
+        src: welcome,
+        alt: 'Related website project preview',
+        caption: 'Website landing page preview (welcome section)',
+      },
+      {
+        src: projects,
+        alt: 'Related website project preview',
+        caption: 'Website featured Projects section preview(Image carousel)',
+      },
+      {
+        src: map,
+        alt: 'Related website project preview',
+        caption: 'Website location map preview(location page)',
+      },
+      {
+        src: listprojects,
+        alt: 'Related website project preview',
+        caption: 'Website list of projects preview',
+      }
     ],
     Icon: Globe2,
     tone: 'neutral',

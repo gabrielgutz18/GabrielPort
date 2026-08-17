@@ -84,8 +84,8 @@ function App() {
       </section>
 
       <Aboutme/>
-      <Skill/>
       <Projects/>
+      <Skill/>
       <Feedback />
       <div id="contact" className="dark bg-background text-foreground">
         <Contact2 />

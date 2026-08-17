@@ -150,7 +150,7 @@ const AboutMe = () => {
 
           <hr className="about-divider" />
 
-          <p className="section-title">What I've built</p>
+          <p className="section-title">College projects I've built</p>
           <ul className="build-list">
             {builds.map(({ title, description, hint, Icon, tone, href }) => (
               <li className={`build-item ${activeBuildTitle === title ? 'is-active' : ''}`} key={title}>

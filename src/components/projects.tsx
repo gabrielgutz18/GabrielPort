@@ -1,5 +1,5 @@
 import './css/projects.css'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import {
   ArrowUpRight,
@@ -24,14 +24,33 @@ const filters: { value: FilterValue; label: string }[] = [
   { value: 'in-progress', label: 'In Progress' },
 ]
 
+/* Keeps the stage from going extreme on very tall or very wide screenshots,
+   so the modal layout stays stable whatever gets added to projectData. */
+const MIN_STAGE_RATIO = 0.72
+const MAX_STAGE_RATIO = 2.4
+
 /* --- Image carousel used inside the project detail modal --- */
 const ProjectCarousel = ({ images }: { images: ProjectImage[] }) => {
   const [index, setIndex] = useState(0)
+  /* Natural width/height per image, so the stage matches the shape of the
+     screenshot instead of forcing every one into the same box. */
+  const [ratios, setRatios] = useState<Record<number, number>>({})
   const hasMultiple = images.length > 1
 
-  useEffect(() => {
-    setIndex(0)
-  }, [images])
+  const measure = (image: HTMLImageElement | null, imageIndex: number) => {
+    if (!image?.naturalWidth || !image.naturalHeight) {
+      return
+    }
+
+    const ratio = Math.min(
+      Math.max(image.naturalWidth / image.naturalHeight, MIN_STAGE_RATIO),
+      MAX_STAGE_RATIO
+    )
+
+    setRatios((current) =>
+      current[imageIndex] ? current : { ...current, [imageIndex]: ratio }
+    )
+  }
 
   if (images.length === 0) {
     return (
@@ -50,8 +69,22 @@ const ProjectCarousel = ({ images }: { images: ProjectImage[] }) => {
 
   return (
     <div className="pc" aria-roledescription="carousel">
-      <div className="pc-stage">
-        <img src={active.src} alt={active.alt} />
+      <div
+        className="pc-stage"
+        style={{ '--pc-ratio': ratios[index] ?? '' } as CSSProperties}
+      >
+        <img
+          src={active.src}
+          alt={active.alt}
+          /* Cached images can finish loading before onLoad is attached, so
+             measure from the ref too. */
+          ref={(node) => {
+            if (node?.complete) {
+              measure(node, index)
+            }
+          }}
+          onLoad={(event) => measure(event.currentTarget, index)}
+        />
         {hasMultiple && (
           <>
             <button
@@ -160,7 +193,7 @@ const Projects = () => {
           <p className="project-label">Projects</p>
           <div className="project-heading-row">
             <h1 className="project-title" id="project-heading">
-              Projects I&apos;ve built
+              Website Projects I&apos;ve built
             </h1>
             <p className="project-intro">
               A collection of website projects that showcase my skills and
@@ -260,7 +293,14 @@ const Projects = () => {
               onClick={(event) => event.stopPropagation()}
             >
               <div className="project-modal-media">
-                <ProjectCarousel images={activeProject.images} />
+                {/* Keyed by project so opening a different one remounts the
+                    carousel back to the first image. Resetting via an effect
+                    instead would leave one render showing a stale index — out
+                    of bounds if the new project has fewer images. */}
+                <ProjectCarousel
+                  key={activeProject.name}
+                  images={activeProject.images}
+                />
               </div>
 
               <div className="project-modal-body">

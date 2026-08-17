@@ -1,11 +1,22 @@
-import { ArrowRight, Camera, Clapperboard, Play, Sparkles } from 'lucide-react'
+import { useState } from 'react'
+import {
+  ArrowRight,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  Clapperboard,
+  Film,
+  Layers,
+  Play,
+  Sparkles,
+} from 'lucide-react'
 import './css/aiCreation.css'
 import './css/reveal.css'
 import Header from './header'
 import Footer from './footer'
 import SectionLink from './sectionLink'
 import { useReveal } from '../hooks/useReveal'
-import { aiImages, aiVideos, promptTechniques } from './data/aiCreationData'
+import { aiImages, aiVideos, latestClip, promptTechniques } from './data/aiCreationData'
 
 /**
  * Shown wherever a piece hasn't been rendered yet (`video: null` / `image: null`
@@ -28,7 +39,100 @@ function MediaPlaceholder({ kind }: { kind: 'video' | 'image' }) {
   )
 }
 
+/**
+ * Frames from one generation set, stacked inside the tile. Clicking the image
+ * steps forward; the arrows and dots are siblings of the stage (not children)
+ * so the whole thing stays valid, focusable markup rather than nested buttons.
+ */
+function TileCarousel({
+  slides,
+  alt,
+  title,
+}: {
+  slides: string[]
+  alt: string
+  title: string
+}) {
+  const [index, setIndex] = useState(0)
+  const count = slides.length
+
+  // Wraps in both directions, so prev from the first frame lands on the last.
+  const go = (next: number) => setIndex(((next % count) + count) % count)
+
+  return (
+    <div
+      className="ai-carousel"
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowRight') {
+          event.preventDefault()
+          go(index + 1)
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault()
+          go(index - 1)
+        }
+      }}
+    >
+      <button
+        type="button"
+        className="ai-carousel-stage"
+        onClick={() => go(index + 1)}
+        aria-label={`${title}: frame ${index + 1} of ${count}. Show next frame.`}
+      >
+        {slides.map((src, slide) => (
+          <img
+            key={src}
+            className="ai-tile-img ai-carousel-slide"
+            src={src}
+            alt={slide === index ? alt : ''}
+            aria-hidden={slide !== index}
+            data-active={slide === index}
+            loading="lazy"
+            draggable={false}
+          />
+        ))}
+      </button>
+
+      <button
+        type="button"
+        className="ai-carousel-nav ai-carousel-nav--prev"
+        onClick={() => go(index - 1)}
+        aria-label={`${title}: previous frame`}
+      >
+        <ChevronLeft aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        className="ai-carousel-nav ai-carousel-nav--next"
+        onClick={() => go(index + 1)}
+        aria-label={`${title}: next frame`}
+      >
+        <ChevronRight aria-hidden="true" />
+      </button>
+
+      <span className="ai-carousel-count">
+        <Layers aria-hidden="true" />
+        {index + 1}/{count}
+      </span>
+
+      <div className="ai-carousel-dots">
+        {slides.map((src, slide) => (
+          <button
+            key={src}
+            type="button"
+            className="ai-carousel-dot"
+            data-active={slide === index}
+            aria-current={slide === index}
+            onClick={() => go(slide)}
+            aria-label={`${title}: go to frame ${slide + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function AiCreation() {
+  const { ref: latestRef, revealClass: latestReveal } = useReveal<HTMLElement>(0.12)
   const { ref: videosRef, revealClass: videosReveal } = useReveal<HTMLElement>(0.12)
   const { ref: galleryRef, revealClass: galleryReveal } = useReveal<HTMLElement>(0.1)
   const { ref: promptsRef, revealClass: promptsReveal } = useReveal<HTMLElement>(0.12)
@@ -90,6 +194,92 @@ export default function AiCreation() {
           </dl>
         </section>
 
+        {/* ===== Latest clip — the newest piece, given the full width ===== */}
+        <section
+          className={`ai-section ai-latest ${latestReveal}`}
+          id="ai-latest"
+          ref={latestRef}
+        >
+          <header className="ai-section-head reveal-item">
+            <p className="ai-label">
+              <Film className="ai-label-icon" aria-hidden="true" />
+              Recently created
+            </p>
+            <h2 className="ai-section-title">Latest short clip</h2>
+            <p className="ai-section-text">
+              The most recent piece off the bench, kept out of the grid so it can play at size.
+            </p>
+          </header>
+
+          <article className="ai-latest-card reveal-item reveal-delay-1">
+            {/* Player and poster share one row and fill the card between them;
+                the credit wraps onto its own line underneath the video. */}
+            <figure className="ai-latest-showcase">
+              <div className="ai-media ai-media--video ai-latest-media">
+                {latestClip.video ? (
+                  <video
+                    className="ai-video"
+                    src={latestClip.video}
+                    poster={latestClip.poster ?? undefined}
+                    controls
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  <MediaPlaceholder kind="video" />
+                )}
+                <span className="ai-chip ai-chip--duration">{latestClip.duration}</span>
+              </div>
+
+              {/* The poster sheet carries its own title and credits — it gets a
+                  frame and nothing else on top of it. */}
+              <div className="ai-latest-poster">
+                <img
+                  className="ai-latest-poster-art"
+                  src={latestClip.keyArt}
+                  alt={latestClip.keyArtAlt}
+                  loading="lazy"
+                />
+              </div>
+
+              <figcaption className="ai-latest-credit">
+                <Sparkles className="ai-latest-credit-icon" aria-hidden="true" />
+                Generated at {latestClip.generator}
+              </figcaption>
+            </figure>
+
+            <div className="ai-latest-body">
+              <div className="ai-latest-lede">
+                <p className="ai-latest-dateline">
+                  <span className="ai-latest-dot" aria-hidden="true" />
+                  New · {latestClip.released}
+                </p>
+
+                <div className="ai-latest-heading">
+                  <h3>{latestClip.title}</h3>
+                  <span className="ai-chip">{latestClip.model}</span>
+                </div>
+
+                <p className="ai-latest-summary">{latestClip.summary}</p>
+
+                <p className="ai-prompt-line">
+                  <span className="ai-prompt-tag">Prompt</span>
+                  {latestClip.prompt}
+                </p>
+              </div>
+
+              <dl className="ai-latest-beats">
+                {latestClip.beats.map((beat) => (
+                  <div className="ai-latest-beat" key={beat.label}>
+                    <dt>{beat.label}</dt>
+                    <dd>{beat.detail}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </article>
+        </section>
+
         {/* ===== Video showcase ===== */}
         <section
           className={`ai-section ai-videos ${videosReveal}`}
@@ -114,7 +304,11 @@ export default function AiCreation() {
                 key={item.title}
                 className={`ai-video-card reveal-item reveal-delay-${index + 1}`}
               >
-                <div className="ai-media ai-media--video">
+                <div
+                  className={`ai-media ai-media--video${
+                    item.orientation === 'portrait' ? ' ai-media--portrait' : ''
+                  }`}
+                >
                   {item.video ? (
                     <video
                       className="ai-video"
@@ -159,8 +353,8 @@ export default function AiCreation() {
             </p>
             <h2 className="ai-section-title">Stills</h2>
             <p className="ai-section-text">
-              Portraits, concepts and product frames. Hover a tile to read the prompt that produced
-              it.
+              Characters, concepts and one-off experiments. Hover a tile to read the prompt behind
+              it — tiles marked with a frame count hold a whole set, so click through them.
             </p>
           </header>
 
@@ -173,7 +367,9 @@ export default function AiCreation() {
                 }`}
               >
                 <div className="ai-media ai-media--image">
-                  {item.image ? (
+                  {item.slides && item.slides.length > 1 ? (
+                    <TileCarousel slides={item.slides} alt={item.alt} title={item.title} />
+                  ) : item.image ? (
                     <img className="ai-tile-img" src={item.image} alt={item.alt} loading="lazy" />
                   ) : (
                     <MediaPlaceholder kind="image" />

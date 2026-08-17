@@ -20,10 +20,11 @@ function Header() {
       <nav id="primary-navigation" className="site-nav" aria-label="Main navigation">
         <SectionLink id="home" onClick={closeMenu}>Home</SectionLink>
         <SectionLink id="aboutme" onClick={closeMenu}>About</SectionLink>
-        <SectionLink id="skills" onClick={closeMenu}>My Skills</SectionLink>
         <SectionLink id="projects" onClick={closeMenu}>Projects</SectionLink>
+        <SectionLink id="skills" onClick={closeMenu}>My Skills</SectionLink>
         <SectionLink id="contact" onClick={closeMenu}>Contact</SectionLink>
         <Link to="/web-solutions" onClick={closeMenu}>Web Solutions</Link>
+        <Link to="/graphic-design" onClick={closeMenu}>Graphic Design</Link>
       </nav>
 
       <div className="header-actions">

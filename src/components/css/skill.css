@@ -1,61 +1,72 @@
+/* ===== Skills =====
+   Same minimal language as the About section: paper ground, hairline rules,
+   ink type. The section used to stack a grid pattern, a striped band, eight
+   white cards with lift-on-hover shadows, a near-black soft-skills panel and a
+   second dark focus card — five surfaces and two colour schemes for what is,
+   in the end, a list of tools.
+
+   What is left is one alignment axis. Every block below the header is the same
+   two-column grid, so the group titles all start at one x and the chips all
+   start at another, and a single 1px rule separates each row. Vertical rhythm
+   comes from two variables (--sk-row-y, --sk-gap) rather than per-block
+   padding, so the spacing stays even as the type scales. */
 .skill {
-  position: relative;
-  padding: 80px var(--page-gutter) 92px;
-  color: #111111;
-}
+  /* Shared with .aboutme so the two sections read as one system. */
+  --sk-ink: #111111;
+  --sk-body: #4b5058;
+  --sk-muted: #646a74;
+  --sk-line: rgba(17, 17, 17, 0.1);
+  --sk-line-strong: rgba(17, 17, 17, 0.3);
 
-.skill::before {
-  content: "";
-  position: absolute;
-  inset: 18px 0 auto;
-  z-index: -1;
-  height: 260px;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0)),
-    repeating-linear-gradient(
-      90deg,
-      rgba(17, 17, 17, 0.045) 0,
-      rgba(17, 17, 17, 0.045) 1px,
-      transparent 1px,
-      transparent 82px
-    );
-  opacity: 0.72;
-}
+  /* The one grid every block below the header shares. */
+  --sk-grid: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  --sk-gap: clamp(24px, 3.4vw, 64px);
+  --sk-row-y: clamp(26px, 2.6vw, 36px);
 
-/* Full-bleed: the negative margin cancels the section's gutter so the marquee
-   runs edge to edge, held off the viewport by --bleed-inset. It is the only
-   element on the page that breaks the container — the motion reads better
-   when the logos travel the full width rather than a centred column. */
-.skill-logo-loop {
   position: relative;
-  display: flex;
-  align-items: center;
-  height: 120px;
-  margin: 0 var(--bleed-pull) 40px;
-  overflow: hidden;
-  color: #000000;
+  z-index: 1;
+  width: 100%;
+  /* Matches .aboutme so the gap between sections is even. */
+  padding: 72px var(--page-gutter) 80px;
+  color: var(--sk-ink);
 }
 
 .skill-header,
-.skill-layout,
-.skill-focus-grid {
+.skill-rows,
+.skill-focus,
+.skill-closing {
   max-width: var(--page-max);
-  margin-right: auto;
-  margin-left: auto;
+  margin-inline: auto;
 }
+
+/* ----- Header ----- */
 
 .skill-header {
-  margin-bottom: 28px;
+  display: grid;
+  grid-template-columns: var(--sk-grid);
+  /* Split, not a shared `gap`: the horizontal gutter between the two columns
+     is much wider than the space wanted between the label and the headline
+     below it, and one shorthand cannot say both. row-gap owns that vertical
+     step (so the label needs no margin of its own) and it carries over to the
+     stacked layout unchanged. */
+  column-gap: var(--sk-gap);
+  row-gap: 20px;
+  /* end, not start: the intro is a caption to the headline, so their last
+     baselines settle on the same line instead of the intro floating at the
+     top of a much taller heading. */
+  align-items: end;
 }
 
+/* Short rule + small caps, matching the label on the other sections. */
 .skill-label {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin: 0 0 18px;
-  color: #000000;
-  font-size: 12px;
-  font-weight: 800;
+  gap: 10px;
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--sk-muted);
+  font-size: 11.5px;
+  font-weight: 700;
   letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
@@ -64,164 +75,127 @@
 .skill-label::before {
   content: "";
   display: block;
-  width: 26px;
-  height: 2px;
-  background: #000000;
-}
-
-.skill-heading-row {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.55fr);
-  gap: clamp(22px, 4vw, 56px);
-  align-items: end;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 1px;
+  background: var(--sk-line-strong);
 }
 
 .skill-title {
-  max-width: 740px;
   margin: 0;
-  color: #000000;
-  font-size: clamp(40px, 6vw, 64px);
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1;
+  color: var(--sk-ink);
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }
 
 .skill-title span {
-  color: #5f6b7a;
+  color: var(--sk-muted);
 }
 
+/* Capped in ch so the measure stays readable however wide the column gets. */
 .skill-intro {
-  margin: 0 0 5px;
-  color: #4b5563;
-  font-size: clamp(15px, 1.7vw, 18px);
-  font-weight: 500;
-  line-height: 1.65;
+  max-width: 46ch;
+  /* Optical, not metric: pulls the intro's baseline onto the headline's. */
+  margin: 0 0 6px;
+  color: var(--sk-body);
+  font-size: clamp(15px, 1.3vw, 16.5px);
+  font-weight: 400;
+  line-height: 1.7;
 }
 
-.skill-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(310px, 0.36fr);
-  gap: 18px;
-  align-items: stretch;
-}
-
-.skill-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.skill-card,
-.soft-skill-card,
-.skill-focus-card {
-  border: 1px solid rgba(17, 17, 17, 0.09);
-  border-radius: 14px;
-  background: #ffffff;
-}
-
-.skill-card {
+/* ----- Logo marquee -----
+   Full-bleed: the negative margin cancels the section's gutter so the strip
+   runs edge to edge, held off the viewport by --bleed-inset. It is the only
+   element here that breaks the container — the motion reads better across the
+   full width — so it carries no rule of its own; the hairline rhythm starts
+   below it with the first row. */
+.skill-logo-loop {
   position: relative;
   display: flex;
-  flex-direction: column;
-  padding: 22px;
+  align-items: center;
+  height: 96px;
+  margin: clamp(36px, 4vw, 56px) var(--bleed-pull);
   overflow: hidden;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+  color: var(--sk-body);
 }
 
-.skill-card:hover {
-  border-color: rgba(17, 17, 17, 0.28);
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-  transform: translateY(-3px);
+/* ----- Skill rows ----- */
+
+.skill-row,
+.skill-focus,
+.skill-closing {
+  display: grid;
+  grid-template-columns: var(--sk-grid);
+  gap: var(--sk-gap);
+  border-top: 1px solid var(--sk-line);
 }
 
-.skill-card-top {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-bottom: 14px;
+.skill-row {
+  padding: var(--sk-row-y) 0;
 }
 
-.skill-card-icon,
-.soft-card-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #1f1f1f, #000000);
-  color: #ffffff;
+.skill-row-index {
+  margin: 0 0 10px;
+  color: var(--sk-muted);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+  line-height: 1;
 }
 
-.skill-card-icon svg,
-.soft-card-icon svg {
-  width: 21px;
-  height: 21px;
-  stroke-width: 2.1;
+.skill-row h2 {
+  margin: 0 0 8px;
+  color: var(--sk-ink);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 
-.skill-card h2,
-.soft-skill-card h2 {
+.skill-row-summary {
+  max-width: 42ch;
   margin: 0;
-  color: #111111;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1.15;
+  color: var(--sk-body);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-.skill-card p {
-  min-height: 66px;
-  margin: 0 0 16px;
-  color: #586174;
-  font-size: 13.5px;
-  font-weight: 500;
-  line-height: 1.55;
-}
-
-.skill-chip-list {
-  margin-top: auto;
-}
-
-.skill-chip-list,
-.soft-skill-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
+/* ----- Chips -----
+   Same token as .badge in the About section: hairline outline, no fill, no
+   lift. They are labels, not buttons — cursor stays default and the only
+   hover is the rule darkening, so nothing here reads as clickable. */
 .skill-chip-list {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .skill-chip-list li {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 32px;
   padding: 6px 12px;
-  border: 1px solid rgba(17, 17, 17, 0.1);
+  border: 1px solid var(--sk-line);
   border-radius: 999px;
-  background: #f7f8fa;
-  color: #252729;
+  color: #3f444c;
+  cursor: default;
   font-size: 12.5px;
-  font-weight: 650;
-  line-height: 1;
-  transition:
-    border-color 150ms ease,
-    background-color 150ms ease,
-    transform 150ms ease;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: border-color 150ms ease, color 150ms ease;
 }
 
 .skill-chip-list li:hover {
-  border-color: rgba(17, 17, 17, 0.32);
-  background: #ffffff;
-  transform: translateY(-1px);
+  border-color: var(--sk-line-strong);
+  color: var(--sk-ink);
 }
 
 .skill-chip-icon {
@@ -229,220 +203,124 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  color: #111111;
+  width: 14px;
+  height: 14px;
+  color: var(--sk-muted);
 }
 
 .skill-chip-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
-.soft-skill-card {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  padding: 24px;
-  border-color: rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(145deg, rgba(20, 20, 20, 1), rgba(0, 0, 0, 1)),
-    #111111;
-  color: #ffffff;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+/* ----- Focus ----- */
+
+.skill-focus {
+  padding: var(--sk-row-y) 0;
 }
 
-.soft-card-header {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-bottom: 22px;
-}
-
-.soft-card-icon {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
-.soft-card-kicker {
-  margin: 0 0 5px;
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  line-height: 1;
+.skill-focus-label {
+  margin: 0;
+  color: var(--sk-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 
-.soft-skill-card h2 {
-  color: #ffffff;
+.skill-focus-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.soft-skill-list {
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
+/* The inner columns keep the term and its description on their own axes, so
+   the three rows read as a table without needing rules to prove it. */
+.skill-focus-list li {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.2fr) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 32px);
+  align-items: baseline;
 }
 
-.soft-skill-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 38px;
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.78);
+.skill-focus-list strong {
+  color: var(--sk-ink);
   font-size: 14px;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.5;
 }
 
-.soft-skill-list li span {
-  display: block;
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.08);
+.skill-focus-list span {
+  color: var(--sk-body);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-.skill-collab-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 28px;
+/* ----- Closing line ----- */
+
+.skill-closing {
+  padding-top: var(--sk-row-y);
 }
 
-.skill-collab-note svg {
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.88);
-  stroke-width: 2.1;
-}
-
-.skill-collab-note p {
+.skill-closing p {
+  grid-column: 1 / -1;
+  max-width: 58ch;
   margin: 0;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.55;
+  color: var(--sk-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-.skill-focus-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+.skill-closing strong {
+  color: var(--sk-ink);
+  font-weight: 700;
 }
 
-.skill-focus-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 130px;
-  padding: 20px;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
-}
+/* ----- Responsive ----- */
 
-.skill-focus-card:hover {
-  border-color: rgba(17, 17, 17, 0.28);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-  transform: translateY(-3px);
-}
-
-.skill-focus-card strong {
-  margin-bottom: 18px;
-  color: #111111;
-  font-size: 24px;
-  font-weight: 850;
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-
-.skill-focus-card span {
-  color: #586174;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-.skill-focus-card-dark {
-  gap: 14px;
-  border-color: rgba(255, 255, 255, 0.12);
-  background: linear-gradient(145deg, #1f1f1f, #000000);
-  color: #ffffff;
-}
-
-.skill-focus-card-dark:hover {
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
-}
-
-.skill-focus-card-dark svg {
-  width: 25px;
-  height: 25px;
-  stroke-width: 2.1;
-}
-
-.skill-focus-card-dark span {
-  color: rgba(255, 255, 255, 0.74);
-}
-
-@media (max-width: 980px) {
-  .skill-heading-row,
-  .skill-layout {
-    grid-template-columns: 1fr;
+@media (max-width: 900px) {
+  .skill-header,
+  .skill-row,
+  .skill-focus,
+  .skill-closing {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .skill-intro {
-    max-width: 680px;
+  .skill-intro,
+  .skill-row-summary {
+    max-width: 62ch;
+    margin-bottom: 0;
   }
 
-  .skill-focus-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* The wide column gutter becomes the vertical step once these stack, which
+     is far more air than the parts of one row need between them. */
+  .skill-row {
+    gap: 18px;
   }
 
-  .soft-skill-card {
-    min-height: auto;
+  .skill-focus {
+    gap: 18px;
   }
 }
 
 @media (max-width: 640px) {
   .skill {
-    padding-top: 50px;
+    padding-top: 56px;
     padding-bottom: 64px;
   }
 
   .skill-logo-loop {
-    height: 96px;
-    margin-bottom: 24px;
+    height: 80px;
+    margin-block: 32px;
   }
 
-  .skill-title {
-    font-size: 42px;
-  }
-
-  .skill-grid,
-  .skill-focus-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .skill-card,
-  .soft-skill-card {
-    padding: 18px;
-  }
-
-  .skill-card {
-    min-height: auto;
-  }
-
-  .skill-card p {
-    min-height: 0;
+  .skill-focus-list li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
   }
 }

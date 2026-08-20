@@ -22,12 +22,10 @@ import {
   SiTypescript,
   SiReact,
   SiAnthropic,
- 
-} from 'react-icons/si' 
+} from 'react-icons/si'
 import { VscVscode } from 'react-icons/vsc'
 import { BiPointer } from 'react-icons/bi'
-import { BrainCircuit, Code2, Cpu, Layers3, MessageCircle, Sparkles, UsersRound } from 'lucide-react'
-import { GridPattern } from "@/components/ui/grid-pattern"
+
 type SkillItem = string | {
   label: string
   icon: ReactNode
@@ -54,14 +52,15 @@ const techLogos = [
   { node: <SiReact />, title: 'ReactJS', href: 'https://react.dev' },
   { node: <SiTypescript />, title: 'Typescript', href: 'https://www.typescriptlang.org' },
   { node: <SiAnthropic />, title: 'Claude code', href: 'https://anthropic.com' },
-  
 ]
 
+/* Soft skills are the last group rather than a separate dark panel: they are
+   part of the same toolkit, and keeping them in the list means one column
+   rhythm down the whole section instead of a sidebar competing with it. */
 const skillGroups = [
   {
     title: 'Development',
     summary: 'Building responsive interfaces, scripting workflows, and wiring front-end logic into practical systems.',
-    Icon: Code2,
     skills: [
       { label: 'Python', icon: <SiPython aria-hidden="true" /> },
       { label: 'JavaScript', icon: <SiJavascript aria-hidden="true" /> },
@@ -76,57 +75,53 @@ const skillGroups = [
   {
     title: 'Platforms',
     summary: 'Shipping projects with version control, hosting, database tools, and domain setup.',
-    Icon: Layers3,
     skills: [
-
-      { label: 'GitHub', icon: <SiGithub aria-hidden="true" /> }, 
+      { label: 'GitHub', icon: <SiGithub aria-hidden="true" /> },
       { label: 'Vercel', icon: <SiVercel aria-hidden="true" /> },
       { label: 'Supabase', icon: <SiSupabase aria-hidden="true" /> },
-      { label: 'GoDaddy', icon: <SiGodaddy aria-hidden="true" /> }
-    
+      { label: 'GoDaddy', icon: <SiGodaddy aria-hidden="true" /> },
     ],
   },
   {
     title: 'AI & Creative Tools',
     summary: 'Using AI-assisted development and design tools to move faster while keeping the work intentional.',
-    Icon: BrainCircuit,
     skills: [
       { label: 'OpenAI Codex', icon: <SiOpenai aria-hidden="true" /> },
       { label: 'Gemini', icon: <SiGooglegemini aria-hidden="true" /> },
       { label: 'Claude code', icon: <SiAnthropic aria-hidden="true" /> },
       { label: 'Cursor', icon: <BiPointer aria-hidden="true" /> },
       { label: 'VS Code', icon: <VscVscode aria-hidden="true" /> },
-      { label: 'Canva', icon: <SiCanva aria-hidden="true" /> }
+      { label: 'Canva', icon: <SiCanva aria-hidden="true" /> },
     ],
   },
   {
-    title: 'Technical/ Hardware',
-    summary: 'Experience with microcontrollers, single-board computers, and general computer engineering tasks to build and maintain practical systems.',
-    Icon: Cpu,
+    title: 'Technical & Hardware',
+    summary: 'Microcontrollers, single-board computers, and the general computer engineering work that keeps practical systems running.',
     skills: [
       { label: 'Arduino IDE', icon: <SiArduino aria-hidden="true" /> },
       { label: 'Raspberry Pi', icon: <SiRaspberrypi aria-hidden="true" /> },
       'Pixhawk autopilot',
-      'Computer System',
-      'troubleshooting and Maintenance',
+      'Computer troubleshooting',
       'Networking',
-      'Network Attached Storage (NAS) setup and management',
-      'installing operating Systems and software',
-      'Hardware Installation and Upgrades',   
+      'NAS setup and management',
+      'OS and software installs',
+      'Hardware upgrades',
       'IT support',
     ],
   },
-  
-]
-
-const softSkills = [
-  'Problem-solving',
-  'Critical thinking',
-  'Communication',
-  'Teamwork',
-  'Adaptability',
-  'Time management',
-  'Creativity',
+  {
+    title: 'How I work',
+    summary: 'Comfortable learning fast, communicating clearly, and improving projects through feedback.',
+    skills: [
+      'Problem-solving',
+      'Critical thinking',
+      'Communication',
+      'Teamwork',
+      'Adaptability',
+      'Time management',
+      'Creativity',
+    ],
+  },
 ]
 
 const focusAreas = [
@@ -161,17 +156,24 @@ function Skill() {
       id="skills"
       aria-labelledby="skills-heading"
     >
-      <GridPattern
-        strokeDasharray="4 2"
-        className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
-      />
-      <div className="skill-logo-loop">
+      <div className="skill-header">
+        <p className="skill-label reveal-item">Technical toolkit</p>
+        <h1 className="skill-title reveal-item" id="skills-heading">
+          Skills that turn ideas into working systems<span>.</span>
+        </h1>
+        <p className="skill-intro reveal-item reveal-delay-1">
+          A mix of web development, deployment, AI-assisted workflows, and
+          computer engineering tools shaped by hands-on projects.
+        </p>
+      </div>
+
+      <div className="skill-logo-loop reveal-item reveal-delay-2">
         <LogoLoop
           logos={techLogos}
-          speed={100}
+          speed={70}
           direction="left"
-          logoHeight={60}
-          gap={60}
+          logoHeight={44}
+          gap={56}
           hoverSpeed={0}
           scaleOnHover
           fadeOut
@@ -180,94 +182,44 @@ function Skill() {
         />
       </div>
 
-      <div className="skill-header reveal-item">
-        <p className="skill-label">Technical toolkit</p>
-        <div className="skill-heading-row">
-          <h1 className="skill-title" id="skills-heading">
-            Skills that turn ideas into working systems<span>.</span>
-          </h1>
-          <p className="skill-intro">
-            A mix of web development, deployment, AI-assisted workflows, and
-            computer engineering tools shaped by hands-on projects.
-          </p>
-        </div>
-      </div>
-
-      <div className="skill-layout">
-        <div className="skill-grid" role="list" aria-label="Technical skill groups">
-          {skillGroups.map(({ title, summary, Icon, skills }, index) => (
-            <article
-              className={`skill-card reveal-item reveal-delay-${Math.min(index + 1, 6)}`}
-              role="listitem"
-              key={title}
-            >
-              <div className="skill-card-top">
-                <span className="skill-card-icon">
-                  <Icon aria-hidden="true" />
-                </span>
-                <h2>{title}</h2>
-              </div>
-              <p>{summary}</p>
-              <ul className="skill-chip-list" aria-label={`${title} skills`}>
-                {skills.map((skill) => (
-                  <li key={getSkillKey(skill)}>{renderSkill(skill)}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-
-        <aside
-          className="soft-skill-card reveal-item reveal-delay-2"
-          aria-labelledby="soft-skills-heading"
-        >
-          <div className="soft-card-header">
-            <span className="soft-card-icon">
-              <Sparkles aria-hidden="true" />
-            </span>
-            <div>
-              <p className="soft-card-kicker">How I work</p>
-              <h2 id="soft-skills-heading">Soft skills</h2>
-            </div>
-          </div>
-
-          <ul className="soft-skill-list">
-            {softSkills.map((skill) => (
-              <li key={skill}>
-                <span aria-hidden="true"></span>
-                {skill}
-              </li>
-            ))}
-          </ul>
-
-          <div className="skill-collab-note">
-            <UsersRound aria-hidden="true" />
-            <p>
-              Comfortable learning fast, communicating clearly, and improving
-              projects through feedback.
-            </p>
-          </div>
-        </aside>
-      </div>
-
-      <div className="skill-focus-grid" role="list" aria-label="Current focus areas">
-        {focusAreas.map((area, index) => (
-          <div
-            className={`skill-focus-card reveal-item reveal-delay-${index + 1}`}
-            role="listitem"
-            key={area.value}
+      <div className="skill-rows">
+        {skillGroups.map(({ title, summary, skills }, index) => (
+          <article
+            className={`skill-row reveal-item reveal-delay-${Math.min(index + 1, 6)}`}
+            key={title}
           >
-            <strong>{area.value}</strong>
-            <span>{area.label}</span>
-          </div>
+            <div className="skill-row-head">
+              <p className="skill-row-index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </p>
+              <h2>{title}</h2>
+              <p className="skill-row-summary">{summary}</p>
+            </div>
+            <ul className="skill-chip-list" aria-label={`${title} skills`}>
+              {skills.map((skill) => (
+                <li key={getSkillKey(skill)}>{renderSkill(skill)}</li>
+              ))}
+            </ul>
+          </article>
         ))}
-        <div
-          className="skill-focus-card skill-focus-card-dark reveal-item reveal-delay-4"
-          role="listitem"
-        >
-          <MessageCircle aria-hidden="true" />
-          <span>Ready to collaborate on practical, user-friendly builds.</span>
-        </div>
+      </div>
+
+      <div className="skill-focus reveal-item">
+        <p className="skill-focus-label">Currently focused on</p>
+        <ul className="skill-focus-list">
+          {focusAreas.map((area) => (
+            <li key={area.value}>
+              <strong>{area.value}</strong>
+              <span>{area.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="skill-closing reveal-item reveal-delay-1">
+        <p>
+          <strong>Open to collaborate</strong> on practical, user-friendly builds.
+        </p>
       </div>
     </section>
   )

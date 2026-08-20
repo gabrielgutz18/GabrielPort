@@ -16,6 +16,13 @@
   --bleed-inset: min(24px, var(--page-gutter));
   /* Negative margin that cancels the section gutter down to --bleed-inset. */
   --bleed-pull: calc(var(--bleed-inset) - var(--page-gutter));
+
+  /* Hero palette - monochrome, one ink colour stepped down for hierarchy. */
+  --ink-900: #09090b;
+  --ink-700: #3f3f46;
+  --ink-500: #52525b;
+  --hairline: rgba(9, 9, 11, 0.14);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
@@ -64,81 +71,154 @@ body {
   z-index: 1;
 }
 
-.text-content-hero {
+/* ============================================================
+   HERO
+   One screen, one message, one primary action.
+
+   Reading order top-to-bottom is availability -> name -> role ->
+   what I do -> what to do next. Everything else (portrait, pixel
+   field, scroll cue) is support and is weighted below the copy.
+   ============================================================ */
+
+.hero {
   position: relative;
+  overflow: hidden;
+  /* svh so mobile browser chrome doesn't push the CTA below the fold. */
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  flex: 0 1 620px;
-  max-width: 760px;
+  justify-content: center;
+  padding: clamp(116px, 15vh, 168px) var(--page-gutter) clamp(28px, 5vh, 48px);
 }
 
-/* Keeps the measure readable even though the column itself is wider now. */
-.text-content-hero p {
-  max-width: 64ch;
+/* The pixel field is decoration, so it is dimmed and masked away from the copy
+   column. That is what lets the headline drop the stack of text-shadows it
+   previously needed to stay legible on top of it. */
+.hero-pixel-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.32;
+  pointer-events: none;
 }
 
-.text-content-hero h1 {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: clamp(42px, 5vw, 64px);
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  color: #0a0a0a;
-  text-shadow: 0 1px 2px rgba(245, 247, 251, 0.95);
+@media (min-width: 861px) {
+  .hero-pixel-background {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.3) 40%, #000 72%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.3) 40%, #000 72%);
+  }
 }
 
-.text-content-hero .subtitle {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: clamp(22px, 2.2vw, 30px);
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 96px);
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+}
+
+/* ----- Copy column ----- */
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 clamp(20px, 2.4vw, 28px);
+  padding: 7px 14px 7px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin: 0;
-  color: #27292b;
-  text-shadow: 0 1px 2px rgba(245, 247, 251, 0.95);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-700);
 }
 
-.text-content-hero p {
-  font-size: clamp(16px, 1.2vw, 18px);
-  font-weight: 500;
-  line-height: 1.6;
-  letter-spacing: -0.005em;
-  margin: 0;
-  color: #1f2226;
-  text-shadow:
-    0 0 4px rgba(245, 247, 251, 0.95),
-    0 0 8px rgba(245, 247, 251, 0.85),
-    0 1px 2px rgba(245, 247, 251, 0.95);
+.hero-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45);
+  animation: heroPulse 2.4s ease-out infinite;
 }
+
+@keyframes heroPulse {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
+  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(40px, 6.4vw, 84px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--ink-900);
+  /* Long name, so let the browser pick the least ragged break. */
+  text-wrap: balance;
+}
+
+.hero-role {
+  margin: clamp(14px, 1.6vw, 20px) 0 0;
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--ink-500);
+}
+
+.hero-lede {
+  margin: clamp(16px, 1.8vw, 22px) 0 0;
+  max-width: 50ch;
+  font-size: clamp(15.5px, 1.1vw, 17px);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.005em;
+  color: var(--ink-700);
+}
+
+/* ----- Actions -----
+   One filled button (primary), one outlined (secondary), then the social links
+   as quiet icon targets. Previously all four were identical solid black pills,
+   which gave the visitor no idea what to click first. */
 
 .hero-actions {
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(28px, 3.2vw, 40px);
 }
 
-/* ===== Hero action buttons — minimalist, solid black ===== */
-.contact-button,
-.resume-button,
-.gitimg,
-.linkedinimg {
-  --btn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+.hero-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-start;
-  gap: 7px;
-  min-height: 46px;
-  padding: 11px 18px;
-  border-radius: 11px;
-  border: none;
-  background-color: #000000;
-  color: #ffffff;
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 14px;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1;
@@ -146,79 +226,174 @@ body {
   white-space: nowrap;
   cursor: pointer;
   transition:
-    transform 0.2s var(--btn-ease),
-    background-color 0.2s var(--btn-ease);
+    transform 220ms var(--ease-out),
+    background-color 220ms var(--ease-out),
+    border-color 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
 }
 
-.contact-button:hover,
-.resume-button:hover,
-.gitimg:hover,
-.linkedinimg:hover {
-  background-color: #1f1f1f;
+.hero-btn--primary {
+  background: var(--ink-900);
+  color: #ffffff;
+  box-shadow: 0 6px 18px -8px rgba(9, 9, 11, 0.5);
+}
+
+.hero-btn--primary:hover {
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -10px rgba(9, 9, 11, 0.55);
+}
+
+.hero-btn-icon {
+  width: 17px;
+  height: 17px;
+  transition: transform 220ms var(--ease-out);
+}
+
+.hero-btn--primary:hover .hero-btn-icon {
+  transform: translateX(3px);
+}
+
+.hero-btn--ghost {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--hairline);
+  color: var(--ink-900);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.hero-btn--ghost:hover {
+  background: #ffffff;
+  border-color: rgba(9, 9, 11, 0.32);
   transform: translateY(-2px);
 }
 
-.contact-button:active,
-.resume-button:active,
-.gitimg:active,
-.linkedinimg:active {
-  transform: translateY(0);
+.hero-actions-divider {
+  width: 1px;
+  height: 26px;
+  margin-inline: 4px;
+  background: var(--hairline);
 }
 
-.contact-button:focus-visible,
-.resume-button:focus-visible,
-.gitimg:focus-visible,
-.linkedinimg:focus-visible {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
-}
-
-.gitimg img,
-.linkedinimg img {
-  display: block;
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  /* dark source SVGs -> render white on the black button */
-  filter: invert(1) brightness(2);
-}
-
-.resume-button span,
-.gitimg span,
-.linkedinimg span {
-  display: block;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .contact-button,
-  .resume-button,
-  .gitimg,
-  .linkedinimg {
-    transition: none;
-  }
-  .contact-button:hover,
-  .resume-button:hover,
-  .gitimg:hover,
-  .linkedinimg:hover {
-    transform: none;
-  }
-}
-
-.hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 100vh;
-  padding: 126px var(--page-gutter) 64px;
-  display: flex;
+.hero-icon-btn {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  /* 46px keeps these above the 44px minimum touch-target guidance. */
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    transform 220ms var(--ease-out),
+    background-color 220ms var(--ease-out),
+    border-color 220ms var(--ease-out);
 }
 
-/* The hero is above the fold, so it reveals on load rather than on scroll
-   (the sections below use the useReveal hook + css/reveal.css instead). */
+.hero-icon-btn:hover {
+  background: #ffffff;
+  border-color: rgba(9, 9, 11, 0.32);
+  transform: translateY(-2px);
+}
+
+.hero-icon-btn img {
+  display: block;
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+  opacity: 0.78;
+  transition: opacity 220ms var(--ease-out);
+}
+
+.hero-icon-btn:hover img {
+  opacity: 1;
+}
+
+.hero-btn:focus-visible,
+.hero-icon-btn:focus-visible,
+.hero-scroll:focus-visible {
+  outline: 2px solid var(--ink-900);
+  outline-offset: 3px;
+}
+
+/* ----- Portrait -----
+   A single frame instead of two staggered cards: less to parse, and it lets the
+   headline own the top of the fold. */
+
+.hero-portrait {
+  position: relative;
+  margin: 0;
+  justify-self: end;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 32px 60px -24px rgba(15, 23, 42, 0.3),
+    0 8px 20px -10px rgba(15, 23, 42, 0.12);
+}
+
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* ----- Scroll cue -----
+   Tells the visitor there is more below the fold, and is a real link so
+   keyboard users get the same shortcut. */
+
+.hero-scroll {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: max-content;
+  margin-top: clamp(24px, 4vh, 40px);
+  padding: 6px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-500);
+  transition: color 220ms var(--ease-out);
+}
+
+.hero-scroll:hover {
+  color: var(--ink-900);
+}
+
+.hero-scroll-icon {
+  width: 15px;
+  height: 15px;
+  animation: heroScrollNudge 2s ease-in-out infinite;
+}
+
+@keyframes heroScrollNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ----- Entrance -----
+   The hero is above the fold, so it reveals on load rather than on scroll (the
+   sections below use the useReveal hook + css/reveal.css instead). */
+
 @keyframes heroFadeUp {
   from {
     opacity: 0;
-    translate: 0 26px;
+    translate: 0 20px;
   }
   to {
     opacity: 1;
@@ -226,205 +401,116 @@ body {
   }
 }
 
-.hero .text-content-hero {
-  animation: heroFadeUp 700ms ease backwards;
-}
-
-.hero .hero-actions {
-  animation: heroFadeUp 700ms 220ms ease backwards;
-}
-
-.hero .hero-visuals {
-  animation: heroFadeUp 700ms 340ms ease backwards;
-}
+.hero-eyebrow { animation: heroFadeUp 620ms var(--ease-out) backwards; }
+.hero-title { animation: heroFadeUp 620ms 80ms var(--ease-out) backwards; }
+.hero-role { animation: heroFadeUp 620ms 160ms var(--ease-out) backwards; }
+.hero-lede { animation: heroFadeUp 620ms 220ms var(--ease-out) backwards; }
+.hero-actions { animation: heroFadeUp 620ms 300ms var(--ease-out) backwards; }
+.hero-portrait { animation: heroFadeUp 700ms 200ms var(--ease-out) backwards; }
+.hero-scroll { animation: heroFadeUp 620ms 420ms var(--ease-out) backwards; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero .text-content-hero,
-  .hero .hero-actions,
-  .hero .hero-visuals {
+  .hero-eyebrow,
+  .hero-title,
+  .hero-role,
+  .hero-lede,
+  .hero-actions,
+  .hero-portrait,
+  .hero-scroll,
+  .hero-status-dot,
+  .hero-scroll-icon {
     animation: none;
   }
-}
 
-.hero-pixel-background {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.68;
-  pointer-events: none;
-}
-
-
-.hero-image {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: clamp(40px, 4vw, 80px);
-  width: 100%;
-  max-width: var(--page-max);
-  margin-inline: auto;
-}
-
-/* Both sides grow into the wider container instead of the text capping at
-   620px and leaving a gulf in the middle at 1080p. */
-.text-content-hero {
-  flex: 1 1 520px;
-}
-
-/* ===== Hero visuals — two-image showcase (reference layout) ===== */
-.hero-visuals {
-  flex: 1 1 480px;
-  max-width: 700px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: clamp(16px, 1.6vw, 24px);
-  min-width: 0;
-}
-
-.hero-visual {
-  margin: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-}
-
-.hero-visual img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* left card — showcase image */
-.hero-visual--showcase {
-  flex: 1 1 46%;
-  aspect-ratio: 4 / 5;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow:
-    0 24px 48px -18px rgba(15, 23, 42, 0.28),
-    0 6px 16px -8px rgba(15, 23, 42, 0.14);
-}
-
-/* right card — portrait, offset downward to match the reference stagger */
-.hero-visual--portrait {
-  flex: 1 1 46%;
-  aspect-ratio: 4 / 5;
-  margin-top: clamp(28px, 4vw, 48px);
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow:
-    0 24px 48px -18px rgba(15, 23, 42, 0.28),
-    0 6px 16px -8px rgba(15, 23, 42, 0.14);
-}
-
-.hero-visual--portrait img {
-  object-position: center top;
-}
-
-/* --- Laptop / tablet-landscape: keep side-by-side, ease the pressure --- */
-@media (max-width: 1024px) {
-  .hero {
-    padding-top: 116px;
-    padding-bottom: 56px;
+  .hero-btn,
+  .hero-icon-btn,
+  .hero-btn-icon {
+    transition: none;
   }
 
-  .hero-image {
-    gap: clamp(28px, 4vw, 48px);
-  }
-
-  .text-content-hero {
-    flex: 1 1 420px;
-  }
-
-  .hero-visuals {
-    flex: 0 1 400px;
-  }
-
-  /* not enough room for 4 buttons on one line here — let them wrap */
-  .hero-actions {
-    flex-wrap: wrap;
+  .hero-btn:hover,
+  .hero-icon-btn:hover {
+    transform: none;
   }
 }
 
-/* --- Tablet-portrait / large phone: stack text over visuals --- */
-@media (max-width: 768px) {
+/* ===== Responsive ===== */
+
+/* Laptop: pull the portrait in so the headline keeps its measure. */
+@media (max-width: 1180px) {
+  .hero-inner {
+    gap: clamp(32px, 4vw, 56px);
+  }
+
+  .hero-portrait {
+    max-width: 360px;
+  }
+}
+
+/* Tablet portrait and below: stack, portrait first, copy left-aligned.
+   Left alignment beats centring here - a centred ragged paragraph is harder to
+   scan, and the buttons keep a single consistent start edge. */
+@media (max-width: 860px) {
   .hero {
     min-height: auto;
-    padding-top: 118px;
-    padding-bottom: 48px;
+    padding-top: clamp(104px, 13vh, 132px);
+    padding-bottom: clamp(40px, 6vh, 56px);
   }
 
-  .hero-image {
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 36px;
+  .hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 44px);
   }
 
-  .hero-visuals {
-    flex: 0 1 auto;
-    width: 100%;
-    max-width: 440px;
-    justify-content: center;
-  }
-
-  .text-content-hero {
-    flex: 0 1 auto;
-    max-width: 560px;
-    width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  .hero-actions {
-    justify-content: center;
-  }
-
-  .contact-button,
-  .resume-button,
-  .gitimg,
-  .linkedinimg {
-    align-self: center;
-  }
-}
-
-/* --- Phones: compact header (logo + hamburger), so less top clearance --- */
-@media (max-width: 640px) {
-  .hero {
-    padding-top: 112px;
-  }
-
-  .hero-visuals {
-    max-width: 380px;
-    gap: 14px;
-  }
-}
-
-/* --- Small phones: images can get too tight side-by-side --- */
-@media (max-width: 420px) {
-  .hero {
-    padding-top: 104px;
-    padding-bottom: 40px;
-  }
-
-  .hero-image {
-    gap: 28px;
-  }
-
-  .hero-visuals {
+  .hero-portrait {
+    order: -1;
+    justify-self: start;
     max-width: 300px;
-    gap: 12px;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
   }
 
-  .hero-visual--portrait {
-    margin-top: 22px;
+  .hero-lede {
+    max-width: 56ch;
+  }
+
+  /* The hero is no longer viewport-height here, so the next section is already
+     peeking above the fold and the cue has nothing left to say. */
+  .hero-scroll {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-portrait {
+    max-width: 232px;
   }
 
   .hero-actions {
-    gap: 8px;
+    gap: 10px;
+  }
+
+  /* All four controls on one row leaves the text buttons ~100px wide, which
+     crushes their labels. The divider stops being a rule and becomes a
+     zero-height line break instead: buttons on row one, socials on row two. */
+  .hero-actions-divider {
+    flex-basis: 100%;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    background: none;
+  }
+
+  .hero-btn {
+    min-height: 46px;
+    font-size: 14.5px;
+  }
+
+  /* Two equal halves, so both stay comfortably tappable at 375px. */
+  .hero-btn--primary,
+  .hero-btn--ghost {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 14px;
   }
 }

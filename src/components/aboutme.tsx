@@ -14,7 +14,7 @@ import {
   type Webinar,
 } from './data/aboutmeData'
 import { createCertificateZoom, type CertificateZoom } from './utils/certificateZoom'
-import { GridPattern } from "@/components/ui/grid-pattern"
+
 /* Drift speed of the certificate row, in CSS pixels per second. A card is
    ~180px wide, so this reads as roughly six seconds per certificate — slow
    enough to take a title in without the row looking stalled. */
@@ -302,10 +302,7 @@ const AboutMe = () => {
       id="aboutme"
       aria-labelledby="about-heading"
     >
-      <GridPattern
-        strokeDasharray="4 2"
-        className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
-      />
+      
       <p className="about-label reveal-item">Hello, Welcome!</p>
 
       <div className="about-layout">

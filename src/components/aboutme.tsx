@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Mail, X, ZoomIn } from 'lucide-react'
 import './css/aboutme.css'
@@ -14,7 +14,37 @@ import {
   type Webinar,
 } from './data/aboutmeData'
 import { createCertificateZoom, type CertificateZoom } from './utils/certificateZoom'
-import { GridPattern } from "@/components/ui/grid-pattern"
+
+/* Drift speed of the certificate row, in CSS pixels per second. A card is
+   ~180px wide, so this reads as roughly six seconds per certificate — slow
+   enough to take a title in without the row looking stalled. */
+const CERT_SCROLL_SPEED = 26
+
+/* Three copies of the row. The middle one is the real, tabbable set; the two
+   flanking clones give a full row of runway on each side, so the loop point is
+   never visible and a manual swipe in either direction has somewhere to go
+   before the recentre catches it. */
+const CERT_LOOP_COPIES = 3
+const CERT_REAL_COPY = 1
+
+/* How long the row has to sit still after a manual scroll before it is nudged
+   back to the middle copy. Long enough not to fight momentum scrolling on a
+   phone, short enough that the runway is restored before the reader swipes
+   again. */
+const CERT_SETTLE_MS = 180
+
+/* Width of one copy of the row, measured rather than computed from the card
+   token, so gap/padding/zoom changes cannot desynchronise the wrap. */
+const certLoopWidth = (track: HTMLDivElement) => {
+  const firstCard = track.children[0] as HTMLElement | undefined
+  const firstRepeat = track.children[webinars.length] as HTMLElement | undefined
+
+  if (!firstCard || !firstRepeat) {
+    return 0
+  }
+
+  return firstRepeat.offsetLeft - firstCard.offsetLeft
+}
 
 const AboutMe = () => {
   const [activeCertificate, setActiveCertificate] = useState<CertificateZoom | null>(null)
@@ -24,6 +54,163 @@ const AboutMe = () => {
   const activeBuild = builds.find((build) => build.title === activeBuildTitle)
   const activeBuildImages = activeBuild?.images ?? []
   const { ref, revealClass } = useReveal<HTMLElement>()
+  const certTrackRef = useRef<HTMLDivElement>(null)
+  const certSettleRef = useRef(0)
+  /* The row's true scroll position, carried at full precision in JS. See the
+     loop below for why it cannot live in scrollLeft alone. */
+  const certOffsetRef = useRef(0)
+  const certDrivingRef = useRef(false)
+  const [certHeld, setCertHeld] = useState(false)
+  /* Starts true so the observer's job is to STOP the row once it is off screen,
+     never to start it. Gating on a callback that has not arrived yet makes a
+     late or missing one look exactly like a broken carousel; erring the other
+     way costs a handful of frames before the observer corrects it. */
+  const [certVisible, setCertVisible] = useState(true)
+
+  /* Park on the middle copy so there is a full row of runway to the left from
+     the first frame — otherwise scrolling back immediately hits scrollLeft 0. */
+  useEffect(() => {
+    const track = certTrackRef.current
+
+    if (!track) {
+      return
+    }
+
+    const recentre = () => {
+      const loopWidth = certLoopWidth(track)
+
+      if (loopWidth > 0) {
+        track.scrollLeft = loopWidth * CERT_REAL_COPY
+      }
+    }
+
+    recentre()
+    window.addEventListener('resize', recentre)
+
+    return () => {
+      window.removeEventListener('resize', recentre)
+    }
+  }, [])
+
+  /* Only animate a row someone can actually see. A rAF loop writing scrollLeft
+     forever is real work on a page where this section is one of six. */
+  useEffect(() => {
+    const track = certTrackRef.current
+
+    if (!track || !window.IntersectionObserver) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setCertVisible(entry.isIntersecting),
+      { threshold: 0 },
+    )
+
+    observer.observe(track)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  /**
+   * The loop.
+   *
+   * Drives the native scroll position rather than a transform, so the row stays
+   * a real scroll container: swipe, trackpad and Tab-to-a-card all keep working
+   * and the browser scrolls a focused card into view on its own. Wrapping is
+   * invisible because the copy it jumps between is pixel-identical.
+   *
+   * The position is accumulated in certOffsetRef and *assigned* each frame,
+   * never read back and incremented. A frame of drift at this speed is ~0.43px,
+   * and the browser reports scrollLeft rounded to whole pixels at dpr 1 — so
+   * `scrollLeft += 0.43` read the same integer back every frame and threw the
+   * increment away, leaving the row completely motionless. Owning the float in
+   * JS lets the sub-pixel remainder survive between frames and turn into a
+   * whole pixel of movement once it has added up.
+   *
+   * Also depends on .certs-track NOT setting `scroll-behavior: smooth` — with
+   * that on, every assignment below would animate and fight the next frame.
+   */
+  useEffect(() => {
+    const track = certTrackRef.current
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    /* A modal open means the row is behind a scrim: the motion is invisible,
+       the frames are wasted, and closing the zoom would drop the reader back on
+       a row that had wandered somewhere else while they were reading. */
+    const modalOpen = Boolean(activeCertificate || activeBuildTitle)
+
+    if (!track || certHeld || !certVisible || modalOpen || prefersReducedMotion) {
+      return
+    }
+
+    /* Pick up wherever the row actually sits. A hover, a swipe or the browser
+       scrolling a focused card into view all move it while the loop is stopped,
+       and resuming from a stale accumulator would snap it back. */
+    certOffsetRef.current = track.scrollLeft
+    certDrivingRef.current = true
+
+    let frame = 0
+    let previousTimestamp = 0
+
+    const step = (timestamp: number) => {
+      const loopWidth = certLoopWidth(track)
+
+      if (previousTimestamp && loopWidth > 0) {
+        certOffsetRef.current += (CERT_SCROLL_SPEED * (timestamp - previousTimestamp)) / 1000
+
+        if (certOffsetRef.current >= loopWidth * (CERT_REAL_COPY + 1)) {
+          certOffsetRef.current -= loopWidth
+        }
+
+        track.scrollLeft = certOffsetRef.current
+      }
+
+      previousTimestamp = timestamp
+      frame = window.requestAnimationFrame(step)
+    }
+
+    frame = window.requestAnimationFrame(step)
+
+    return () => {
+      certDrivingRef.current = false
+      window.cancelAnimationFrame(frame)
+    }
+  }, [activeBuildTitle, activeCertificate, certHeld, certVisible])
+
+  /* Only manual scrolling needs this. The loop fires a scroll event on every
+     frame and already handles its own wrap, so letting those through meant
+     tearing down and rebuilding a timer sixty times a second for nothing. */
+  const handleCertScroll = () => {
+    if (certDrivingRef.current) {
+      return
+    }
+
+    window.clearTimeout(certSettleRef.current)
+
+    certSettleRef.current = window.setTimeout(() => {
+      const track = certTrackRef.current
+
+      if (!track) {
+        return
+      }
+
+      const loopWidth = certLoopWidth(track)
+
+      if (loopWidth <= 0) {
+        return
+      }
+
+      const offsetInCopy = ((track.scrollLeft % loopWidth) + loopWidth) % loopWidth
+
+      track.scrollLeft = loopWidth * CERT_REAL_COPY + offsetInCopy
+      certOffsetRef.current = track.scrollLeft
+    }, CERT_SETTLE_MS)
+  }
+
+  useEffect(() => () => window.clearTimeout(certSettleRef.current), [])
+
 
   useEffect(() => {
     if (!activeCertificate && !activeBuildTitle) {
@@ -115,10 +302,7 @@ const AboutMe = () => {
       id="aboutme"
       aria-labelledby="about-heading"
     >
-      <GridPattern
-        strokeDasharray="4 2"
-        className="-z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
-      />
+      
       <p className="about-label reveal-item">Hello, Welcome!</p>
 
       <div className="about-layout">
@@ -127,16 +311,12 @@ const AboutMe = () => {
             About me<span>.</span>
           </h1>
 
-          <blockquote className="about-quote">
-            "Building practical digital systems through web development, IT infrastructure, and embedded engineering projects."
-          </blockquote>
-
           <p className="about-intro">
-            "Computer Engineer specializing in web development, IT support, and systems engineering. Experienced in academic projects, freelance design work, Arduino systems, and internship-based web development and NAS setup."
+            Computer Engineer specializing in web development, IT support, and systems engineering. Experienced in academic projects, freelance design work, Arduino systems, and internship-based web development and NAS setup.
           </p>
 
           <p className="about-intro">
-            <em>"I leverage modern development tools, including AI-assisted workflows, to improve productivity and accelerate problem-solving while maintaining a strong focus on understanding core concepts and implementation."</em>
+            I leverage modern development tools, including AI-assisted workflows, to improve productivity and accelerate problem-solving while maintaining a strong focus on understanding core concepts and implementation.
           </p>
 
           <div className="badge-row" role="list" aria-label="Skills">
@@ -184,17 +364,6 @@ const AboutMe = () => {
               </li>
             ))}
           </ul>
-
-          <div className="cta-bar">
-            <p>
-              <strong>Currently open to opportunities</strong> where I can
-              build useful systems and keep learning in the real world.
-            </p>
-            <SectionLink id="contact" className="cta-btn">
-              <Mail aria-hidden="true" />
-              Get in touch
-            </SectionLink>
-          </div>
         </div>
 
         <aside
@@ -219,39 +388,6 @@ const AboutMe = () => {
 
           <hr className="about-divider" />
 
-          <p className="section-title">
-            Certificates <span className="section-count">{webinars.length}</span>
-          </p>
-          <div className="cert-list" role="list" aria-label="Certificates">
-            {webinars.map((webinar) => (
-              <button
-                type="button"
-                className="cert-row"
-                role="listitem"
-                key={webinar.title}
-                onClick={() => openCertificate(webinar)}
-                aria-label={`Open ${webinar.title} certificate`}
-              >
-                <span className="cert-thumb">
-                  {webinar.image ? (
-                    <img src={webinar.image} alt="" />
-                  ) : (
-                    <ImageIcon aria-hidden="true" />
-                  )}
-                </span>
-                <span className="cert-info">
-                  <span className="cert-title">{webinar.title}</span>
-                  <span className="cert-desc">{webinar.description}</span>
-                </span>
-                <span className="cert-zoom" aria-hidden="true">
-                  <ZoomIn />
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <hr className="about-divider" />
-
           <p className="section-title">Outside the terminal</p>
           <div className="facts-grid" role="list" aria-label="Fun facts">
             {facts.map((fact) => (
@@ -266,6 +402,79 @@ const AboutMe = () => {
             ))}
           </div>
         </aside>
+      </div>
+
+      {/* Certificates sit below the two columns rather than inside the aside.
+          Nested in the sidebar they were a 288px scroll box inside a scrolling
+          page — a wheel over it hijacked the page scroll, and twelve items were
+          only ever three rows tall. Full width, one drifting row. */}
+      <div className="about-certs reveal-item reveal-delay-3" role="group" aria-label="Certificates">
+        <div className="certs-head">
+          <p className="section-title">
+            Certificates <span className="section-count">{webinars.length}</span>
+          </p>
+          <p className="certs-hint">Tap a card to enlarge</p>
+        </div>
+
+        <div
+          className="certs-track"
+          ref={certTrackRef}
+          onScroll={handleCertScroll}
+          onMouseEnter={() => setCertHeld(true)}
+          onMouseLeave={() => setCertHeld(false)}
+          onFocusCapture={() => setCertHeld(true)}
+          onBlurCapture={() => setCertHeld(false)}
+          onTouchStart={() => setCertHeld(true)}
+          onTouchEnd={() => setCertHeld(false)}
+        >
+          {Array.from({ length: CERT_LOOP_COPIES }, (_, copyIndex) =>
+            webinars.map((webinar) => {
+              /* Only the middle copy is the real list. The clones exist to make
+                 the wrap invisible, so they are hidden from assistive tech and
+                 taken out of the tab order — otherwise the row would announce
+                 thirty-six certificates and Tab through all of them. */
+              const isClone = copyIndex !== CERT_REAL_COPY
+
+              return (
+                <button
+                  type="button"
+                  className="cert-card"
+                  key={`${copyIndex}-${webinar.title}`}
+                  onClick={() => openCertificate(webinar)}
+                  aria-label={`Open ${webinar.title} certificate`}
+                  aria-hidden={isClone || undefined}
+                  tabIndex={isClone ? -1 : undefined}
+                >
+                  <span className="cert-card-thumb">
+                    {webinar.image ? (
+                      <img src={webinar.image} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <ImageIcon aria-hidden="true" />
+                    )}
+                    <span className="cert-card-zoom" aria-hidden="true">
+                      <ZoomIn />
+                    </span>
+                  </span>
+                  <span className="cert-card-title">{webinar.title}</span>
+                </button>
+              )
+            }),
+          )}
+        </div>
+      </div>
+
+      {/* Closes the section, so it sits after the certificates rather than
+          mid-column. Full width also takes ~95px off the left column, which is
+          most of what made the aside look like it stopped early. */}
+      <div className="cta-bar reveal-item reveal-delay-4">
+        <p>
+          <strong>Currently open to opportunities</strong> where I can
+          build useful systems and keep learning in the real world.
+        </p>
+        <SectionLink id="contact" className="cta-btn">
+          <Mail aria-hidden="true" />
+          Get in touch
+        </SectionLink>
       </div>
 
       {activeCertificate && createPortal(

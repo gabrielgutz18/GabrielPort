@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './css/header.css'
 import iconHead from '../assets/GW.svg'
@@ -7,11 +7,23 @@ import SectionLink from './sectionLink'
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  // At the very top the bar is transparent so the hero reads as one full-bleed
+  // screen; it only earns its glass panel and border once content slides under.
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className={`site-header${menuOpen ? ' nav-open' : ''}`}>
+    <header
+      className={`site-header${scrolled ? ' is-scrolled' : ''}${menuOpen ? ' nav-open' : ''}`}
+    >
       <Link className="site-logo" to="/" onClick={closeMenu}>
         <img className="site-logo-icon" src={iconHead} alt="" />
         <span className="site-logo-text">Gabriel.</span>

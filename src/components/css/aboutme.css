@@ -1,52 +1,39 @@
-
 /* ===== About =====
-   Light-canvas translation of the AI Creation page's token set, so the two
-   share one component language — same 18px card radius, same pill labels and
-   chips, same lift-and-halo hover — rendered as ink on paper instead of white
-   on black. Values mirror --ai-* in aiCreation.css. */
+   Minimal light layout: one paper surface, hairline rules, ink type.
+   The section used to stack a grid pattern, three radial blooms, glass cards
+   and a near-black sticky panel; that chrome competed with the content it was
+   framing. What is left is type, 1px rules and two columns. Hover only darkens
+   a rule or tints a row — nothing lifts, glows or inverts, so the eye tracks
+   the text instead of the motion. */
 .aboutme {
-  --ab-surface: rgba(255, 255, 255, 0.72);
-  --ab-surface-strong: #ffffff;
-  --ab-line: rgba(17, 17, 17, 0.09);
-  --ab-line-strong: rgba(17, 17, 17, 0.24);
-  --ab-muted: #52555b;
-  --ab-faint: #8a909b;
-  --ab-radius: 18px;
-  --ab-radius-sm: 14px;
-  --ab-rest: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --ab-halo: 0 18px 42px rgba(15, 23, 42, 0.12);
+  --ab-ink: #111111;
+  --ab-body: #4b5058;
+  /* #767c86 measured 3.9:1 on the page ground — under the 4.5:1 floor for the
+     small text it carries. #646a74 is 5.1:1 and still clearly secondary. */
+  --ab-muted: #646a74;
+  --ab-line: rgba(17, 17, 17, 0.1);
+  --ab-line-strong: rgba(17, 17, 17, 0.3);
+  --ab-tint: rgba(17, 17, 17, 0.035);
+  --ab-radius: 12px;
+  --ab-radius-sm: 8px;
 
   position: relative;
   z-index: 1;
   width: 100%;
   padding: 72px var(--page-gutter) 80px;
-  color: #111111;
+  color: var(--ab-ink);
 }
 
-/* Ambient blooms — the light-mode counterpart of the AI page's glow layer.
-   Sits at -11 so the GridPattern (-z-10) still reads on top of it. */
-.aboutme::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -11;
-  pointer-events: none;
-  background:
-    radial-gradient(52% 40% at 10% 4%, rgba(255, 255, 255, 0.95), transparent 70%),
-    radial-gradient(46% 36% at 92% 72%, rgba(214, 222, 233, 0.5), transparent 72%),
-    radial-gradient(38% 30% at 46% 108%, rgba(226, 232, 240, 0.45), transparent 70%);
-}
-
-/* Rule + text, matching .skill-label. */
+/* Short rule + small caps, matching the label on the other sections. */
 .about-label {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   max-width: var(--page-max);
-  margin: 0 auto 18px;
-  color: #000000;
-  font-size: 12px;
-  font-weight: 800;
+  margin: 0 auto 20px;
+  color: var(--ab-muted);
+  font-size: 11.5px;
+  font-weight: 700;
   letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
@@ -56,16 +43,19 @@
   content: "";
   display: block;
   flex: 0 0 auto;
-  width: 26px;
-  height: 2px;
-  background: #000000;
+  width: 22px;
+  height: 1px;
+  background: var(--ab-line-strong);
 }
 
 .about-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.72fr);
-  gap: clamp(36px, 3.4vw, 64px);
-  align-items: start;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.66fr);
+  gap: clamp(32px, 4vw, 72px);
+  /* stretch, not start: the aside's left rule is the column divider, and on
+     `start` it ended wherever the aside's content did — leaving a hairline
+     that stopped halfway down and read as a rendering fault. */
+  align-items: stretch;
   max-width: var(--page-max);
   margin: 0 auto;
 }
@@ -75,72 +65,35 @@
   min-width: 0;
 }
 
+/* A single hairline does the work the dark card used to: it separates the
+   aside without introducing a second surface, colour scheme and shadow. */
 .about-side {
-  position: sticky;
-  top: 102px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--ab-radius);
-  /* Matches the AI page's surface build: near-black with a top-edge bloom,
-     never pure #000 (which smears on OLED). */
-  background:
-    radial-gradient(90% 55% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 70%),
-    #0a0a0c;
-  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.34);
-  backdrop-filter: blur(18px) saturate(130%);
-  -webkit-backdrop-filter: blur(18px) saturate(130%);
-}
-
-.about-side .about-divider {
-  margin: 22px 0;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.about-side .section-title {
-  color: rgba(255, 255, 255, 0.68);
+  padding-left: clamp(24px, 3vw, 48px);
+  border-left: 1px solid var(--ab-line);
 }
 
 .about-title {
-  margin: 0 0 14px;
-  color: #000000;
-  font-size: clamp(42px, 7vw, 64px);
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1;
+  margin: 0 0 18px;
+  color: var(--ab-ink);
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }
 
 .about-title span {
-  color: #5f6b7a;
+  color: var(--ab-muted);
 }
 
-/* Promoted from a bare left rule to a glass pull-quote card — the section's
-   opening statement was the flattest thing on the page. */
-.about-quote {
-  position: relative;
-  max-width: 680px;
-  margin: 0 0 24px;
-  padding: 22px 26px;
-  border: 1px solid var(--ab-line);
-  border-left: 3px solid #111111;
-  border-radius: var(--ab-radius);
-  background: var(--ab-surface);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--ab-rest);
-  color: #2c2f35;
-  font-size: clamp(15px, 1.8vw, 17px);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.65;
-}
-
+/* Capped in ch so the measure stays readable however wide the grid column
+   gets on a large display. */
 .about-intro {
-  max-width: 670px;
-  margin: 0 0 16px;
-  color: #3a3d42;
-  font-size: clamp(15px, 1.4vw, 16.5px);
+  max-width: 62ch;
+  margin: 0 0 14px;
+  color: var(--ab-body);
+  font-size: clamp(15px, 1.3vw, 16.5px);
   font-weight: 400;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 .about-intro:last-of-type {
@@ -151,228 +104,107 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 0 0 26px;
+  margin: 0 0 32px;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 36px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   border: 1px solid var(--ab-line);
   border-radius: 999px;
-  background: var(--ab-surface);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--ab-rest);
-  color: #374151;
+  color: #3f444c;
   cursor: default;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: border-color 150ms ease, color 150ms ease;
 }
 
 .badge:hover {
   border-color: var(--ab-line-strong);
-  background: var(--ab-surface-strong);
-  box-shadow: var(--ab-halo);
-  transform: translateY(-2px);
+  color: var(--ab-ink);
 }
 
 .badge svg {
-  width: 15px;
-  height: 15px;
-  stroke-width: 2;
+  width: 14px;
+  height: 14px;
   flex: 0 0 auto;
+  color: var(--ab-muted);
+  stroke-width: 1.9;
 }
 
 .about-divider {
   height: 1px;
   margin: 0 0 24px;
   border: 0;
-  background: rgba(17, 17, 17, 0.1);
+  background: var(--ab-line);
 }
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 28px;
-}
-
-.stat-card {
-  min-height: auto;
-  padding: 16px 18px;
-  border: 1px solid rgba(17, 17, 17, 0.09);
-  border-radius: 10px;
-  background: #ffffff;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease;
-}
-
-.stat-card:hover {
-  border-color: rgba(17, 17, 17, 0.28);
-  transform: translateY(-2px);
-}
-
-.stat-num {
-  margin: 0 0 8px;
-  color: #000000;
-  font-size: clamp(27px, 4vw, 34px);
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
-.stat-label {
-  color: #586174;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-/* Section eyebrow — small caps + a short rule, matching the AI page's
-   uppercase/0.14em label rhythm. */
+/* Section eyebrow — small caps only. The trailing gradient rule it used to
+   carry was decoration on top of a label that already reads as one. */
 .section-title {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 16px;
-  color: #586174;
-  font-size: 11.5px;
-  font-weight: 800;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 14px;
+  color: var(--ab-muted);
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
 }
 
-.section-title::after {
-  content: "";
-  flex: 1 1 auto;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(17, 17, 17, 0.14), transparent);
-}
-
-.about-side .section-title::after {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent);
-}
-
 .section-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  min-width: 20px;
-  height: 19px;
-  padding: 0 7px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 10px;
-  font-weight: 800;
+  color: var(--ab-muted);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0;
+  opacity: 0.7;
 }
 
 .build-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  margin: 0 0 28px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .build-item {
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-  min-height: auto;
-  padding: 20px;
-  overflow: hidden;
+  gap: 10px;
+  padding: 15px 16px;
   border: 1px solid var(--ab-line);
   border-radius: var(--ab-radius);
-  background: var(--ab-surface);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--ab-rest);
-  transition:
-    border-color 250ms ease,
-    box-shadow 250ms ease,
-    transform 250ms ease;
-}
-
-/* Sheen that fades in on hover — the light-mode read of the AI page's halo. */
-.build-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(80% 60% at 50% 0%, rgba(255, 255, 255, 0.9), transparent 70%);
-  transition: opacity 250ms ease;
+  background: #ffffff;
+  transition: border-color 150ms ease;
 }
 
 .build-item:hover {
   border-color: var(--ab-line-strong);
-  background: var(--ab-surface-strong);
-  box-shadow: var(--ab-halo);
-  transform: translateY(-4px);
 }
 
-.build-item:hover::after {
-  opacity: 1;
-}
-
-.build-item:has(.build-card-button:focus),
+/* Open in the modal — a darker rule is enough to mark it. The old state
+   inverted the whole card to black, which read as a different component. */
 .build-item.is-active {
-  border-color: #000000;
-  background: #000000;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
-}
-
-.build-item:has(.build-card-button:focus) .build-icon,
-.build-item.is-active .build-icon {
-  background: #ffffff;
-  color: #000000;
-}
-
-.build-item:has(.build-card-button:focus) .build-text strong,
-.build-item.is-active .build-text strong {
-  color: #ffffff;
-}
-
-.build-item:has(.build-card-button:focus) .build-text span,
-.build-item.is-active .build-text span {
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.build-item:has(.build-card-button:focus) .build-link,
-.build-item.is-active .build-link {
-  border-color: rgba(255, 255, 255, 0.46);
-  color: #ffffff;
+  border-color: var(--ab-ink);
 }
 
 .build-card-button {
-  /* Above .build-item::after so the hover sheen never sits over the text. */
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 11px;
+  gap: 8px;
   flex: 1 1 auto;
   min-width: 0;
   padding: 0;
   border: 0;
+  border-radius: 6px;
   background: transparent;
   color: inherit;
   cursor: pointer;
@@ -380,51 +212,30 @@
   text-align: left;
 }
 
-.build-card-button:focus {
-  outline: 0;
+.build-card-button:focus-visible {
+  outline: 2px solid var(--ab-ink);
+  outline-offset: 4px;
 }
 
-.build-card-button:active {
-  transform: translateY(1px);
-}
-
-/* Bordered rounded tile, same construction as .ai-placeholder-icon. */
-.build-icon {
+/* Bare glyph rather than a tinted tile — three tile colours for three cards
+   was colour carrying no meaning. */
+.build-icon,
+.build-icon-neutral,
+.build-icon-cool,
+.build-icon-warm {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border: 1px solid rgba(17, 17, 17, 0.08);
-  border-radius: 13px;
-  transition: transform 250ms ease, box-shadow 250ms ease;
-}
-
-.build-item:hover .build-icon {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.16);
+  border: 0;
+  background: none;
+  color: var(--ab-ink);
 }
 
 .build-icon svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2;
-}
-
-.build-icon-neutral {
-  background: #111111;
-  color: #ffffff;
-}
-
-.build-icon-cool {
-  background: #e7eef8;
-  color: #1f5b99;
-}
-
-.build-icon-warm {
-  background: #f1eadf;
-  color: #7a5a28;
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.75;
 }
 
 .build-text {
@@ -433,11 +244,11 @@
 
 .build-text strong {
   display: block;
-  margin: 0 0 4px;
-  color: #111111;
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.25;
+  margin: 0 0 5px;
+  color: var(--ab-ink);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .build-text span {
@@ -446,179 +257,132 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  color: #586174;
+  color: var(--ab-body);
   font-size: 13px;
-  font-weight: 500;
-  line-height: 1.5;
+  font-weight: 400;
+  line-height: 1.55;
 }
 
-/* Chip, matching .ai-chip — reads as an affordance rather than stray caps. */
 .build-text span.build-hint {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 12px;
-  padding: 4px 10px;
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: 999px;
-  background: rgba(17, 17, 17, 0.035);
-  color: #5b6270;
+  display: block;
+  margin-top: 10px;
+  color: var(--ab-muted);
   font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: border-color 250ms ease, color 250ms ease, background-color 250ms ease;
 }
 
-.build-item:hover .build-text span.build-hint {
-  border-color: rgba(17, 17, 17, 0.24);
-  background: rgba(17, 17, 17, 0.06);
-  color: #111111;
-}
-
-.build-item:has(.build-card-button:focus) .build-text span.build-hint,
-.build-item.is-active .build-text span.build-hint {
-  color: rgba(255, 255, 255, 0.55);
-}
-
+/* Underlined text link instead of a second pill button — the card itself is
+   already the primary target, so this one should read as secondary. */
 .build-link {
-  position: relative;
-  z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   flex: 0 0 auto;
   align-self: flex-start;
   margin-top: auto;
-  min-height: 34px;
-  padding: 7px 13px;
-  border: 1px solid rgba(17, 17, 17, 0.18);
-  border-radius: 999px;
-  color: #111111;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ab-line-strong);
+  color: var(--ab-ink);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease;
+  transition: border-color 150ms ease;
 }
 
-.build-link:hover {
-  border-color: #000000;
-  background: #000000;
-  color: #ffffff;
+.build-link:hover,
+.build-link:focus-visible {
+  border-color: var(--ab-ink);
 }
 
 .build-link svg {
-  width: 14px;
-  height: 14px;
-  stroke-width: 2.2;
+  width: 13px;
+  height: 13px;
+  stroke-width: 2;
 }
 
+/* Full-width closing band, below both columns and the certificate row. */
 .cta-bar {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 26px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--ab-radius);
-  /* Same layered near-black + top bloom as the AI page's dark surfaces. */
-  background:
-    radial-gradient(70% 120% at 50% 0%, rgba(255, 255, 255, 0.09), transparent 70%),
-    #0c0c0e;
-  box-shadow: 0 22px 52px rgba(15, 23, 42, 0.2);
-}
-
-.cta-bar > * {
-  position: relative;
-  z-index: 1;
+  gap: 20px;
+  max-width: var(--page-max);
+  margin: 44px auto 0;
+  padding-top: 36px;
+  border-top: 1px solid var(--ab-line);
 }
 
 .cta-bar p {
-  max-width: 560px;
+  max-width: 52ch;
   margin: 0;
-  color: #d1d5db;
+  color: var(--ab-body);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.6;
 }
 
 .cta-bar p strong {
-  color: #ffffff;
-  font-weight: 800;
+  color: var(--ab-ink);
+  font-weight: 700;
 }
 
 .cta-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 8px;
   flex: 0 0 auto;
   min-height: 44px;
-  padding: 11px 19px;
-  border: 1px solid #ffffff;
+  padding: 12px 20px;
+  border: 1px solid var(--ab-ink);
   border-radius: 999px;
-  background: #ffffff;
-  color: #000000;
-  font-size: 14px;
-  font-weight: 800;
+  background: var(--ab-ink);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
   line-height: 1;
   text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    transform 120ms ease;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-.cta-btn:hover {
+.cta-btn:hover,
+.cta-btn:focus-visible {
   background: transparent;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.cta-btn:active {
-  transform: translateY(1px);
+  color: var(--ab-ink);
 }
 
 .cta-btn svg {
   width: 16px;
   height: 16px;
-  stroke-width: 2.2;
+  stroke-width: 2;
 }
 
+/* ===== Experience ===== */
 .timeline {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0;
   margin: 0;
 }
 
-/* Fades out toward the bottom so the rail reads as a trail, not a hard border. */
 .timeline::before {
   content: "";
   position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 15px;
+  top: 7px;
+  bottom: 7px;
+  left: 4px;
   width: 1px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.28),
-    rgba(255, 255, 255, 0.14) 60%,
-    transparent
-  );
+  background: var(--ab-line);
 }
 
 .tl-item {
   position: relative;
   display: flex;
   gap: 16px;
-  padding-bottom: 15px;
+  padding-bottom: 20px;
 }
 
 .tl-item:last-child {
@@ -630,47 +394,24 @@
   display: flex;
   justify-content: center;
   flex: 0 0 auto;
-  width: 31px;
-  padding-top: 4px;
+  width: 9px;
+  padding-top: 5px;
 }
 
+/* The current role is a filled dot rather than a pulsing halo — same signal,
+   without an animation running forever in the corner of the eye. */
 .tl-dot span {
   display: block;
-  width: 11px;
-  height: 11px;
-  border: 2px solid rgba(255, 255, 255, 0.78);
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--ab-line-strong);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.98);
-  box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.98);
+  background: #f5f7fb;
 }
 
 .tl-dot span.active {
-  background: #ffffff;
-  box-shadow:
-    0 0 0 5px rgba(0, 0, 0, 0.98),
-    0 0 22px rgba(255, 255, 255, 0.34);
-  animation: tlPulse 2.6s ease-in-out infinite;
-}
-
-/* Marks the current role without needing a coloured badge. */
-@keyframes tlPulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 5px rgba(0, 0, 0, 0.98),
-      0 0 18px rgba(255, 255, 255, 0.26);
-  }
-  50% {
-    box-shadow:
-      0 0 0 5px rgba(0, 0, 0, 0.98),
-      0 0 30px rgba(255, 255, 255, 0.55);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tl-dot span.active {
-    animation: none;
-  }
+  border-color: var(--ab-ink);
+  background: var(--ab-ink);
 }
 
 .tl-body {
@@ -686,166 +427,174 @@
 
 .tl-year {
   margin-bottom: 4px;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  color: var(--ab-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   line-height: 1.2;
   text-transform: uppercase;
 }
 
 .tl-title {
-  margin-bottom: 5px;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--ab-ink);
+  font-size: 13.5px;
+  font-weight: 700;
   line-height: 1.35;
 }
 
 .tl-desc {
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--ab-body);
   font-size: 12.5px;
-  font-weight: 500;
-  line-height: 1.52;
+  font-weight: 400;
+  line-height: 1.55;
 }
 
-/* ===== Certificates — compact clickable rows ===== */
-.cert-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 260px;
-  overflow-y: auto;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+/* ===== Certificates — one horizontal row below the two columns =====
+   Native scroll + scroll-snap does the work: the row swipes on touch, takes a
+   trackpad flick, and Tab walks the cards with the browser scrolling each into
+   view. The arrows are a convenience layer on top, not the mechanism, so
+   nothing breaks if script is slow. No autoplay — twelve certificates are
+   something you browse, not something that should move on its own. */
+.about-certs {
+  --cert-card-w: 168px;
+  --cert-gap: 12px;
+
+  max-width: var(--page-max);
+  margin: 48px auto 0;
+  padding-top: 40px;
+  border-top: 1px solid var(--ab-line);
 }
 
-.cert-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.cert-list::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.26);
-}
-
-.cert-row {
+.certs-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: var(--ab-radius-sm);
-  background: rgba(255, 255, 255, 0.045);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.certs-head .section-title {
+  margin: 0;
+}
+
+/* States the interaction in words — the zoom glyph alone told a touch user
+   nothing, and hover is not available to them at all. */
+.certs-hint {
+  flex: 1 1 auto;
+  margin: 0;
+  color: var(--ab-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.certs-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cert-card-w);
+  gap: var(--cert-gap);
+  overflow-x: auto;
+  /* Room for the focus ring and the hover border to breathe. */
+  padding: 2px;
+  overscroll-behavior-x: contain;
+  /* No `scroll-behavior: smooth` here on purpose — the loop writes scrollLeft
+     every frame, and with smooth scrolling on, each write would start its own
+     animation and fight the next one. The arrows opt into smooth per call.
+     Snapping is gone for the same reason: it pulls against a steady drift. */
+
+  /* The motion is the affordance now, and across three copies the thumb sat at
+     a third width and jumped on every recentre. */
+  scrollbar-width: none;
+}
+
+.certs-track::-webkit-scrollbar {
+  display: none;
+}
+
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: inherit;
   cursor: zoom-in;
-  text-align: left;
   font: inherit;
-  transition:
-    border-color 220ms ease,
-    background-color 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
+  text-align: left;
 }
 
-.cert-row:hover,
-.cert-row:focus-visible {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.34);
-  background: rgba(255, 255, 255, 0.09);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45), 0 0 22px rgba(255, 255, 255, 0.06);
+.cert-card:focus-visible {
+  outline: 2px solid var(--ab-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-.cert-thumb,
-.cert-row img {
-  transition: transform 220ms ease;
-}
-
-.cert-row:hover .cert-thumb {
-  transform: scale(1.04);
-}
-
-.cert-thumb {
+/* Fixed aspect box: the thumbnails are certificates in wildly different
+   proportions, and reserving the space keeps the row from reflowing as the
+   lazy images arrive. */
+.cert-card-thumb {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  aspect-ratio: 4 / 3;
+  width: 100%;
   overflow: hidden;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--ab-line);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--ab-muted);
+  transition: border-color 150ms ease;
 }
 
-.cert-thumb img {
+.cert-card:hover .cert-card-thumb {
+  border-color: var(--ab-line-strong);
+}
+
+.cert-card-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.cert-thumb svg {
-  width: 20px;
-  height: 20px;
+.cert-card-thumb > svg {
+  width: 22px;
+  height: 22px;
 }
 
-.cert-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1 1 auto;
+.cert-card-zoom {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ab-ink);
 }
 
-.cert-title {
-  color: #ffffff;
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.35;
+.cert-card-zoom svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2;
+}
+
+.cert-card-title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.cert-desc {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
-  font-weight: 500;
+  color: var(--ab-ink);
+  font-size: 12px;
+  font-weight: 600;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.cert-zoom {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.38);
-  transition: color 160ms ease, background-color 160ms ease;
-}
-
-.cert-row:hover .cert-zoom {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.cert-zoom svg {
-  width: 15px;
-  height: 15px;
-  stroke-width: 2.2;
-}
 
 .certificate-modal {
   position: fixed;
@@ -1378,60 +1127,76 @@
   stroke-width: 2.4;
 }
 
+/* ===== Outside the terminal — plain icon + line, not six more cards ===== */
+/* One column, not two. Paired up, every hobby line wrapped to two rows and
+   the block still only stood ~125px tall, which is what left the aside ending
+   a long way above the projects beside it. */
 .facts-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 25px;
 }
 
 .fact-card {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: auto;
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: var(--ab-radius-sm);
-  background: rgba(255, 255, 255, 0.045);
   text-align: left;
-  transition:
-    background-color 220ms ease,
-    border-color 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
-}
-
-.fact-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.085);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.05);
-}
-
-.fact-emoji {
-  font-size: 20px;
-  line-height: 1;
 }
 
 .fact-image {
   flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   display: block;
-  filter: invert(1) brightness(1.6);
+  /* The source SVGs are white-filled for the old dark card; inverting makes
+     them read as ink on the light column. */
+  filter: invert(1);
+  opacity: 0.6;
 }
 
 .fact-text {
-  min-width: 0;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 11.5px;
-  font-weight: 600;
-  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-width: 0;
+  color: var(--ab-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* The two-column split only survives while the card grid is still 3-up. The
+   moment cards wrap to a second row the left column outgrows the aside again,
+   so the layout stacks first, at 1024, and the cards follow at 900. */
+@media (max-width: 1024px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Stacked: the divider moves from the left edge to the top edge. */
+  .about-side {
+    padding-left: 0;
+    padding-top: 32px;
+    border-left: 0;
+    border-top: 1px solid var(--ab-line);
+  }
+
+  /* The aside is full width here, so pairs still fit on one line each and the
+     block does not run long and skinny. */
+  .facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .build-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -1439,31 +1204,6 @@
     width: 100%;
     padding-top: 58px;
     padding-bottom: 70px;
-  }
-
-  .about-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .about-side {
-    position: static;
-    padding: 18px;
-  }
-
-  .stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .stat-card:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .build-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .build-item {
-    align-items: stretch;
   }
 
   .build-modal {
@@ -1503,6 +1243,17 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .about-certs {
+    margin-top: 40px;
+    padding-top: 32px;
+  }
+
+  /* The card is the target on desktop; on a phone the link needs its own
+     44px row so it is not a hairline between two thumbs. */
+  .build-link {
+    min-height: 44px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -1512,19 +1263,11 @@
   }
 
   .about-title {
-    font-size: 42px;
-  }
-
-  .stat-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-card:last-child {
-    grid-column: auto;
+    font-size: 36px;
   }
 
   .facts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .build-list {
@@ -1532,12 +1275,7 @@
   }
 
   .build-item {
-    gap: 12px;
     padding: 16px;
-  }
-
-  .build-card-button {
-    gap: 12px;
   }
 
   .build-modal {
@@ -1594,12 +1332,13 @@
     visibility: hidden;
   }
 
-  .build-icon {
-    width: 38px;
-    height: 38px;
-  }
-
   .cta-btn {
     width: 100%;
+  }
+
+  /* Narrower cards so a second one is always half-visible at the edge — that
+     peek is what tells a phone reader the row scrolls. */
+  .about-certs {
+    --cert-card-w: 148px;
   }
 }

@@ -20,6 +20,7 @@ import cert9 from '../../images/Cert/PCB.png'
 import cert10 from '../../images/Cert/ccna.png'
 import cert11 from '../../images/Cert/sddt.png'
 import cert12 from '../../images/Cert/serverless.png'
+import cert13 from '../../images/Cert/IBM_cloud.png'
 import hobby1 from '../../assets/svgs/coding-code-svgrepo-com.svg'
 import hobby2 from '../../assets/svgs/coffee-cup-svgrepo-com.svg'
 import hobby3 from '../../assets/svgs/d-pad-svgrepo-com.svg'
@@ -358,6 +359,11 @@ export const webinars: Webinar[] = [
     description:
       'Organized by DICT, CamarinesNorte Provincial Office, Region V: Given this of 30th day of September 2025',
     image: cert12,
+  },
+  {
+    title: 'Cloud Computing Fundamentals',
+    description: 'Issued by IBM SkillsBuild, Issued on: Aug 23, 2026',
+    image: cert13,
   },
 ]
 

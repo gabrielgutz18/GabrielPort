@@ -511,6 +511,75 @@
   display: none;
 }
 
+/* The drag rail. Replaces the native bar hidden above: same job, but scaled to
+   one copy of the row instead of three, so the thumb is a true fraction of the
+   thirteen certificates and holds still through a recentre. */
+.certs-rail {
+  position: relative;
+  /* Clips whichever half of a wrapped thumb is past an edge. */
+  overflow: hidden;
+  margin-top: 14px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ab-line);
+  cursor: grab;
+  touch-action: none;
+}
+
+.certs-rail:active {
+  cursor: grabbing;
+}
+
+.certs-rail-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ab-ink);
+  opacity: 0.45;
+  /* Width and transform are written from JS every frame; transitioning either
+     would lag the thumb behind the row it is supposed to be reporting. */
+  transition: opacity 0.18s ease;
+  will-change: transform;
+}
+
+.certs-rail:hover .certs-rail-thumb,
+.certs-rail:active .certs-rail-thumb {
+  opacity: 0.75;
+}
+
+/* A 6px target is a mouse affordance. Touch needs a real one, so the rail keeps
+   its hairline look but gets a 22px invisible hit area on coarse pointers. */
+@media (pointer: coarse) {
+  .certs-rail {
+    height: 22px;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .certs-rail::before {
+    content: '';
+    position: absolute;
+    inset: 8px 0;
+    border-radius: 999px;
+    background: var(--ab-line);
+  }
+
+  .certs-rail-thumb {
+    top: 8px;
+    height: 6px;
+  }
+}
+
+/* The row stops moving under reduced motion, so the rail is the only way to
+   travel it — make it unmistakably present rather than a hairline. */
+@media (prefers-reduced-motion: reduce) {
+  .certs-rail-thumb {
+    opacity: 0.75;
+  }
+}
+
 .cert-card {
   display: flex;
   flex-direction: column;

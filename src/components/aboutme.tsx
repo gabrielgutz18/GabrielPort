@@ -33,6 +33,11 @@ const CERT_REAL_COPY = 1
    again. */
 const CERT_SETTLE_MS = 180
 
+/* Floor for the drag thumb. With thirteen certificates across a wide viewport
+   the proportional width is still comfortable, but a narrow phone showing one
+   card of thirteen would otherwise compute a thumb a few pixels wide. */
+const CERT_THUMB_MIN_W = 28
+
 /* Width of one copy of the row, measured rather than computed from the card
    token, so gap/padding/zoom changes cannot desynchronise the wrap. */
 const certLoopWidth = (track: HTMLDivElement) => {
@@ -66,6 +71,17 @@ const AboutMe = () => {
      late or missing one look exactly like a broken carousel; erring the other
      way costs a handful of frames before the observer corrects it. */
   const [certVisible, setCertVisible] = useState(true)
+
+  /* The drag rail below the row. It deliberately does NOT mirror the track's
+     native scroll geometry: the track is three copies wide, which is what made
+     the native bar unusable (a third-width thumb that jumped on every
+     recentre). This one is scaled to a single copy and wrapped, so it reads as
+     one continuous loop no matter which copy the row is physically parked on. */
+  const certRailRef = useRef<HTMLDivElement>(null)
+  const certThumbRef = useRef<HTMLSpanElement>(null)
+  const certThumbWrapRef = useRef<HTMLSpanElement>(null)
+  const certMetricsRef = useRef({ loopWidth: 0, viewWidth: 0, railWidth: 0 })
+  const certDragRef = useRef<{ pointerId: number; grab: number } | null>(null)
 
   /* Park on the middle copy so there is a full row of runway to the left from
      the first frame — otherwise scrolling back immediately hits scrollLeft 0. */
@@ -183,6 +199,10 @@ const AboutMe = () => {
      frame and already handles its own wrap, so letting those through meant
      tearing down and rebuilding a timer sixty times a second for nothing. */
   const handleCertScroll = () => {
+    /* Above the early return on purpose: the thumb has to follow the drift too,
+       and that is exactly the case the guard below skips. */
+    updateCertThumb()
+
     if (certDrivingRef.current) {
       return
     }
@@ -210,6 +230,182 @@ const AboutMe = () => {
   }
 
   useEffect(() => () => window.clearTimeout(certSettleRef.current), [])
+
+  /* Layout reads are cached rather than taken per scroll event: the drift fires
+     one scroll a frame, and interleaving offsetLeft reads with the thumb's
+     style writes would thrash layout sixty times a second. */
+  const measureCertRail = () => {
+    const track = certTrackRef.current
+    const rail = certRailRef.current
+
+    if (!track || !rail) {
+      return
+    }
+
+    certMetricsRef.current = {
+      loopWidth: certLoopWidth(track),
+      viewWidth: track.clientWidth,
+      railWidth: rail.clientWidth,
+    }
+  }
+
+  /* Thumb geometry is written straight to the DOM instead of through state.
+     At one update per frame a re-render here would re-render the whole section,
+     cards and all, for two numbers that only ever touch one element. */
+  const updateCertThumb = () => {
+    const track = certTrackRef.current
+    const thumb = certThumbRef.current
+    const wrapThumb = certThumbWrapRef.current
+
+    if (!track || !thumb || !wrapThumb) {
+      return
+    }
+
+    let { loopWidth, viewWidth, railWidth } = certMetricsRef.current
+
+    /* First paint and post-resize frames can land before the measure effect,
+       and a zero here would divide the thumb out of existence. */
+    if (loopWidth <= 0 || railWidth <= 0) {
+      measureCertRail()
+      ;({ loopWidth, viewWidth, railWidth } = certMetricsRef.current)
+    }
+
+    if (loopWidth <= 0 || railWidth <= 0) {
+      return
+    }
+
+    /* Modulo one copy: this is what keeps the thumb still while the row is
+       recentred underneath it. The jump the native bar showed was the recentre
+       becoming visible; against a single copy it cancels out exactly. */
+    const offsetInCopy = ((track.scrollLeft % loopWidth) + loopWidth) % loopWidth
+    const width = Math.max(CERT_THUMB_MIN_W, (viewWidth / loopWidth) * railWidth)
+    const x = (offsetInCopy / loopWidth) * railWidth
+
+    thumb.style.width = `${width}px`
+    wrapThumb.style.width = `${width}px`
+    thumb.style.transform = `translateX(${x}px)`
+    /* The trailing copy. As the head runs off the right edge this brings the
+       same thumb back in on the left, so a wrap looks continuous instead of a
+       teleport. The rail clips whichever half is outside. */
+    wrapThumb.style.transform = `translateX(${x - railWidth}px)`
+  }
+
+  useEffect(() => {
+    measureCertRail()
+    updateCertThumb()
+
+    const remeasure = () => {
+      measureCertRail()
+      updateCertThumb()
+    }
+
+    window.addEventListener('resize', remeasure)
+
+    return () => {
+      window.removeEventListener('resize', remeasure)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /* Dragging the rail scrolls the row. Every write lands inside the middle
+     copy, which is why the drag can cross the loop point in either direction
+     without ever hitting scrollLeft 0 or the end of the track. */
+  const scrollCertToRailX = (clientX: number) => {
+    const track = certTrackRef.current
+    const rail = certRailRef.current
+    const drag = certDragRef.current
+
+    if (!track || !rail || !drag) {
+      return
+    }
+
+    const { loopWidth, railWidth } = certMetricsRef.current
+
+    if (loopWidth <= 0 || railWidth <= 0) {
+      return
+    }
+
+    const railLeft = rail.getBoundingClientRect().left
+    const raw = (clientX - railLeft - drag.grab) / railWidth
+    const fraction = ((raw % 1) + 1) % 1
+
+    track.scrollLeft = loopWidth * CERT_REAL_COPY + fraction * loopWidth
+    certOffsetRef.current = track.scrollLeft
+  }
+
+  const handleCertRailPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rail = certRailRef.current
+
+    if (!rail || event.button !== 0) {
+      return
+    }
+
+    measureCertRail()
+
+    const thumbRect = certThumbRef.current?.getBoundingClientRect()
+    const wrapRect = certThumbWrapRef.current?.getBoundingClientRect()
+
+    /* Grabbing the thumb keeps it under the finger; clicking bare rail centres
+       it on the press instead of lurching by the grab offset. Either half of a
+       wrapped thumb counts as the thumb. */
+    const onThumb =
+      (thumbRect && event.clientX >= thumbRect.left && event.clientX <= thumbRect.right) ||
+      (wrapRect && event.clientX >= wrapRect.left && event.clientX <= wrapRect.right)
+
+    let grab = (thumbRect?.width ?? 0) / 2
+
+    if (onThumb) {
+      const hit =
+        thumbRect && event.clientX >= thumbRect.left && event.clientX <= thumbRect.right
+          ? thumbRect
+          : wrapRect
+
+      if (hit) {
+        grab = event.clientX - hit.left
+      }
+    }
+
+    certDragRef.current = { pointerId: event.pointerId, grab }
+
+    /* Capture keeps the drag alive when the pointer leaves a 6px rail, which it
+       will on any real swipe. Not worth failing the drag over though: a browser
+       that refuses the capture still tracks fine until the pointer exits. */
+    try {
+      rail.setPointerCapture(event.pointerId)
+    } catch {
+      /* no-op */
+    }
+    /* Same latch the row uses for hover and touch, so the drift does not fight
+       the drag. */
+    setCertHeld(true)
+    scrollCertToRailX(event.clientX)
+    updateCertThumb()
+    event.preventDefault()
+  }
+
+  const handleCertRailPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (certDragRef.current?.pointerId !== event.pointerId) {
+      return
+    }
+
+    scrollCertToRailX(event.clientX)
+    updateCertThumb()
+  }
+
+  const endCertRailDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (certDragRef.current?.pointerId !== event.pointerId) {
+      return
+    }
+
+    try {
+      certRailRef.current?.releasePointerCapture(event.pointerId)
+    } catch {
+      /* no-op */
+    }
+
+    certDragRef.current = null
+    setCertHeld(false)
+  }
 
 
   useEffect(() => {
@@ -460,6 +656,24 @@ const AboutMe = () => {
               )
             }),
           )}
+        </div>
+
+        {/* A pointer affordance, not a second way to read the list: the row is
+            already reachable by Tab (the browser scrolls each focused card into
+            view), so exposing a half-implemented scrollbar widget to assistive
+            tech would add a control that duplicates working navigation. Hidden
+            for the same reason the clones above are. */}
+        <div
+          className="certs-rail"
+          ref={certRailRef}
+          onPointerDown={handleCertRailPointerDown}
+          onPointerMove={handleCertRailPointerMove}
+          onPointerUp={endCertRailDrag}
+          onPointerCancel={endCertRailDrag}
+          aria-hidden="true"
+        >
+          <span className="certs-rail-thumb" ref={certThumbRef} />
+          <span className="certs-rail-thumb" ref={certThumbWrapRef} />
         </div>
       </div>
 

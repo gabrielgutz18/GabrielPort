@@ -22,6 +22,13 @@ import credifyPaymentImage from '../../images/Credify/mop.png'
 import credifyLoginImage from '../../images/Credify/logIn.png'
 import credifyVaultEmptyImage from '../../images/Credify/userInterface.png'
 import credifyVaultAccountsImage from '../../images/Credify/holding accounts.png'
+import orderMenu from '../../images/veggies/orderMenu.png'
+import orderMenu2 from '../../images/veggies/orderMenu2.png'
+import veggieFooter from '../../images/veggies/veggieFooter.png'
+import checkoutVeg from '../../images/veggies/checkoutVeg.png'
+import adminVeg from '../../images/veggies/adminVeg.png'
+import adminDashVeg from '../../images/veggies/adminDashVeg.png'
+import adminCMSvegItem from '../../images/veggies/adminCMSvegItem.png'
 
 export type ProjectImage = {
   src: string
@@ -251,5 +258,61 @@ export const projects: Project[] = [
         caption: 'Vault holding saved accounts',
       },
     ],
+    
+
+  },
+  {
+    name: 'Bagsakan Veggies PHL',
+    date: '2026 · Client · Completed',
+    status: 'finished',
+    role: 'Front-end Developer, Devops',
+    summary: 'A website for a local vegetable store to facilitate online orders.',
+    tags: ['Web', 'E-commerce', 'UI','Laravel', "Php", "Cpanel"],
+    details:
+      'An online ordering website for a local vegetable store, making it easier for customers to browse available products and place orders.',
+    solution:
+      'Built a responsive storefront with a clear product-ordering flow and deployed it through cPanel for reliable access.',
+    images:[
+      {
+        src: orderMenu,
+        alt: 'Bagsakan Veggies PHL website preview',
+        caption: 'Website preview',
+      },
+      {
+        src: orderMenu2,
+        alt: 'Bagsakan Veggies PHL website order menu preview',
+        caption: 'Order menu',
+      },
+      {
+        src: veggieFooter,
+        alt: 'Bagsakan Veggies PHL website footer preview',
+        caption: 'Footer section',
+      },
+      {
+        src: checkoutVeg,
+        alt: 'Bagsakan Veggies PHL website checkout page preview',
+        caption: 'Checkout page',
+      },
+      {
+        src: adminVeg,
+        alt: 'Bagsakan Veggies PHL website admin panel preview',
+        caption: 'Admin panel',
+      },
+      {
+        src: adminDashVeg,
+        alt: 'Bagsakan Veggies PHL website admin dashboard preview',
+        caption: 'Admin dashboard',
+      },
+      {
+        src: adminCMSvegItem,
+        alt: 'Bagsakan Veggies PHL website admin CMS item management preview',
+        caption: 'Admin CMS item management',
+      },
+      {
+        src: adminCMSvegItem,
+        alt: 'Bagsakan Veggies PHL website admin CMS item management preview',
+        caption: 'Admin CMS item management',
+      }
+    ]
   }
 ]

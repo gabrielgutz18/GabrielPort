@@ -22,6 +22,9 @@ import {
   SiTypescript,
   SiReact,
   SiAnthropic,
+  SiLaravel,
+  SiPhp,
+  SiCpanel
 } from 'react-icons/si'
 import { VscVscode } from 'react-icons/vsc'
 import { BiPointer } from 'react-icons/bi'
@@ -52,6 +55,9 @@ const techLogos = [
   { node: <SiReact />, title: 'ReactJS', href: 'https://react.dev' },
   { node: <SiTypescript />, title: 'Typescript', href: 'https://www.typescriptlang.org' },
   { node: <SiAnthropic />, title: 'Claude code', href: 'https://anthropic.com' },
+  { node: <SiLaravel />, title: 'Laravel', href: 'https://laravel.com' },
+  { node: <SiPhp />, title: 'PHP', href: 'https://www.php.net' },
+  { node: <SiCpanel />, title: 'cPanel', href: 'https://cpanel.net' }
 ]
 
 /* Soft skills are the last group rather than a separate dark panel: they are
@@ -70,6 +76,8 @@ const skillGroups = [
       { label: 'MySQL', icon: <SiMysql aria-hidden="true" /> },
       { label: 'ReactJS', icon: <SiReact aria-hidden="true" /> },
       { label: 'Typescript', icon: <SiTypescript aria-hidden="true" /> },
+      { label: 'Laravel', icon: <SiLaravel aria-hidden="true" /> },
+      { label: 'PHP', icon: <SiPhp aria-hidden="true" /> },
     ],
   },
   {
@@ -80,6 +88,7 @@ const skillGroups = [
       { label: 'Vercel', icon: <SiVercel aria-hidden="true" /> },
       { label: 'Supabase', icon: <SiSupabase aria-hidden="true" /> },
       { label: 'GoDaddy', icon: <SiGodaddy aria-hidden="true" /> },
+      { label: 'cPanel', icon: <SiCpanel aria-hidden="true" /> },
     ],
   },
   {

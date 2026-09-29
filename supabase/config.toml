@@ -5,3 +5,8 @@ project_id = "qejildomfttpjximkxid"
 # the function, not auth.
 [functions.send-contact-email]
 verify_jwt = false
+
+# Public feedback form: same reason, no visitor JWT. Abuse protection is the
+# reCAPTCHA token the function verifies with Google before inserting.
+[functions.submit-feedback]
+verify_jwt = false

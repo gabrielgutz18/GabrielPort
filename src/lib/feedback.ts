@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import type { FeedbackEntry } from '../components/data/feedbackData'
 
@@ -22,7 +23,7 @@ const toEntry = (row: FeedbackRow): FeedbackEntry => ({
   date: row.created_at,
 })
 
-/** Approved-or-not is not modelled on this table, so every row is returned. */
+/** No `approved` filter needed: the table's select policy only exposes approved rows. */
 export async function fetchFeedback(): Promise<FeedbackEntry[]> {
   // Unconfigured Supabase: return nothing so the section falls back to its seed
   // entries instead of surfacing an error.
@@ -50,23 +51,41 @@ export type NewFeedback = {
 }
 
 /**
- * Inserts one review and returns it as a FeedbackEntry. `select().single()`
- * hands back the stored row — including the DB-generated id and created_at —
- * so the caller can drop it straight into the list without a refetch.
+ * Sends one review to the submit-feedback Edge Function, which verifies the
+ * reCAPTCHA token with Google before inserting — the table itself no longer
+ * accepts inserts from the browser. The function returns the stored row,
+ * including the DB-generated id and created_at, so the caller can drop it
+ * straight into the list without a refetch.
  */
-export async function submitFeedback(input: NewFeedback): Promise<FeedbackEntry> {
+export async function submitFeedback(
+  input: NewFeedback,
+  captchaToken: string,
+): Promise<FeedbackEntry> {
   if (!supabase) {
     throw new Error('Feedback is unavailable right now. Please try again later.')
   }
 
-  const { data, error } = await supabase
-    .from('feedback')
-    .insert(input)
-    .select('id, name, source, rating, comment, created_at')
-    .single()
+  const { data, error } = await supabase.functions.invoke<FeedbackRow>(
+    'submit-feedback',
+    { body: { ...input, captchaToken } },
+  )
 
   if (error) {
-    throw error
+    // A non-2xx reply surfaces as a generic "non-2xx status code" error; the
+    // function's own `{ error }` message (bad captcha, missing secret, ...) is
+    // on the response body, so pull it out to make the console log useful.
+    const detail =
+      error instanceof FunctionsHttpError
+        ? await error.context
+            .json()
+            .then((body: { error?: string }) => body?.error)
+            .catch(() => null)
+        : null
+    throw new Error(detail ?? error.message)
+  }
+
+  if (!data) {
+    throw new Error('Feedback was not saved. Please try again.')
   }
 
   return toEntry(data)

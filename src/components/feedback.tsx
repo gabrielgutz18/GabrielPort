@@ -1,12 +1,23 @@
 import './css/feedback.css'
 import './css/reveal.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Star } from 'lucide-react'
 import { type FeedbackEntry } from './data/feedbackData'
 import { fetchFeedback, submitFeedback } from '../lib/feedback'
 import { useReveal } from '../hooks/useReveal'
+import ReCaptcha, { type ReCaptchaHandle } from './reCaptcha'
 
 const MAX_STARS = 5
+
+// Public by design: the site key only renders the widget. The matching secret
+// lives on the submit-feedback Edge Function, which does the actual check.
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+
+if (!RECAPTCHA_SITE_KEY) {
+  console.error(
+    'reCAPTCHA is not configured. Set VITE_RECAPTCHA_SITE_KEY (locally in .env.local, and in the Vercel project env vars).',
+  )
+}
 
 const formatDate = (iso: string) => {
   const parsed = new Date(iso)
@@ -52,6 +63,8 @@ const Feedback = () => {
   const [justAddedId, setJustAddedId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const captchaRef = useRef<ReCaptchaHandle>(null)
 
   // Load the existing reviews once on mount. A failed fetch just leaves the list
   // empty — the form still works, so it is not worth blocking the section on.
@@ -98,17 +111,24 @@ const Feedback = () => {
       setError('Please add your name and a short comment.')
       return
     }
+    if (!captchaToken) {
+      setError('Please confirm you’re not a robot.')
+      return
+    }
 
     setSubmitting(true)
     setError('')
 
     try {
-      const saved = await submitFeedback({
-        name: name.trim(),
-        source: source.trim() || 'Visitor',
-        rating,
-        comment: comment.trim(),
-      })
+      const saved = await submitFeedback(
+        {
+          name: name.trim(),
+          source: source.trim() || 'Visitor',
+          rating,
+          comment: comment.trim(),
+        },
+        captchaToken,
+      )
 
       // Newest first, using the row the database returned (real id + date).
       setEntries((current) => [saved, ...current])
@@ -123,6 +143,10 @@ const Feedback = () => {
       console.error('Failed to submit feedback:', err)
       setError('Something went wrong sending your feedback. Please try again.')
     } finally {
+      // Google accepts each token once, so whether the save worked or not, the
+      // next attempt needs a fresh tick of the checkbox.
+      captchaRef.current?.reset()
+      setCaptchaToken(null)
       setSubmitting(false)
     }
   }
@@ -216,6 +240,19 @@ const Feedback = () => {
                 maxLength={400}
               />
             </label>
+
+            {RECAPTCHA_SITE_KEY && (
+              <ReCaptcha
+                ref={captchaRef}
+                siteKey={RECAPTCHA_SITE_KEY}
+                onChange={(token) => {
+                  setCaptchaToken(token)
+                  if (token) {
+                    setError('')
+                  }
+                }}
+              />
+            )}
 
             {error && <p className="fb-error">{error}</p>}
 

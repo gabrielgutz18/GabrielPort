@@ -313,6 +313,7 @@ export const projects: Project[] = [
         alt: 'Bagsakan Veggies PHL website admin CMS item management preview',
         caption: 'Admin CMS item management',
       }
-    ]
+    ],
+    link: 'https://bagsakanveggies.com/'
   }
 ]
